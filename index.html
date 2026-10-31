@@ -701,7 +701,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   <a href="#s-contact" data-jump data-dock="7"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg><span>Contact</span></a>
 </nav>
 
-<p class="motion-note glass" id="motion-note" hidden>Your system has “reduce motion” turned on, so the swarm is slowed and ripples are off.</p>
+
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
@@ -1365,7 +1365,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   }
 
   /* ---------- reduced-motion notice ---------- */
-  function noteMotion() { $('#motion-note').hidden = !(renderer && reduce); }
+  function noteMotion() { var n = $('#motion-note'); if (n) n.hidden = !(renderer && reduce); }
   noteMotion();
   var onMQ = function (e) { reduce = e.matches; noteMotion(); };
   if (motionQ.addEventListener) motionQ.addEventListener('change', onMQ);
