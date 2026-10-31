@@ -1,78 +1,72 @@
-# Applied GenAI & Agentic Systems Portfolio
+# Nikhil Salunke — Portfolio
 
-A tactical dark minimalist personal portfolio website engineered specifically for **Applied Generative AI & Agentic Systems Architects**. Inspired by the high-craft tactical aesthetics of Merkur Design and optimized for instantaneous deployment on **GitHub Pages**.
+A static, single-page portfolio for an applied AI engineer. A WebGL particle
+swarm forms a sphere in the hero and re-forms into a different shape for every
+section as you scroll; all reading content sits on frosted-glass panels so the
+swarm stays visible but never competes with the text.
 
----
-
-## ⚡ Core Features
-
-- **Tactical Dark Minimalist Aesthetic:** Deep obsidian canvas (`#08090B`), razor-thin 0.5px/1px borders, subtle analog noise film grain overlay, and high-contrast monospace telemetry.
-- **Interactive 3D Latent Space Canvas:** Real-time Three.js 3D network visualizing agentic synapses and latent space nodes with cursor gravity interaction and click-pulse impulse waves.
-- **Architectural Capabilities Matrix (OS Window Style):** Tabbed inspection of Agentic Orchestration, Graph-RAG Retrieval, Continuous Evaluation & Guardrails, and High-Throughput Inference Serving.
-- **Proven Systems Showcase (`SYS-001` — `SYS-004`):** Production case studies indexed in tactical monospace with quantifiable SLAs (P95 latency, recall benchmarks, token cost savings).
-- **Dedicated Interactive Resume Section:** Complete chronological experience, foundations, technical matrix, and a one-click **Print / Download PDF** action with print-optimized CSS.
-- **Client-Side Markdown Blog Engine:** Real-time category filtering, instant keyword search, and a slide-over full-screen reader with syntax highlighting, KaTeX math rendering, and deep link URL hashes (`#blog/multi-agent-architectures`).
-- **Tactical Contact Terminal:** Direct terminal interface with one-click clipboard copying and direct social links.
+No build step — plain HTML, CSS and JavaScript, ready for GitHub Pages.
 
 ---
 
-## 🚀 1-Minute GitHub Pages Deployment
+## Structure
 
-Because this project is built with **100% pure static web standards** (Tailwind CDN, Three.js, Marked.js, vanilla JavaScript):
-
-1. **Push this folder to a GitHub repository:**
-   ```bash
-   git init
-   git add .
-   git commit -m "feat: initial genai portfolio deployment"
-   git branch -M main
-   git remote add origin https://github.com/<your-username>/<your-repo-name>.git
-   git push -u origin main
-   ```
-
-2. **Enable GitHub Pages:**
-   - Go to your repository on GitHub.
-   - Click **Settings** → **Pages** (in the left sidebar).
-   - Under **Build and deployment > Source**, select **Deploy from a branch**.
-   - Under **Branch**, select `main` and `/ (root)`.
-   - Click **Save**.
-
-Your portfolio will be live at:
-`https://<your-username>.github.io/<your-repo-name>/` (or `https://<your-username>.github.io/` if using a user page).
-
----
-
-## ✍️ How to Add or Edit Blog Posts
-
-Open `js/blogs-data.js` and add or modify items in the `window.BLOG_POSTS` array:
-
-```javascript
-{
-  id: "your-article-slug",
-  title: "Your Article Title",
-  slug: "your-article-slug",
-  category: "Agent Architectures", // or "RAG & Retrieval", "Evaluation & Safety", etc.
-  date: "NOV 2026",
-  readTime: "5 MIN READ",
-  summary: "Brief synopsis displayed on the card preview.",
-  tags: ["LangGraph", "Multi-Agent", "System Design"],
-  content: `
-### Your Heading
-
-Write standard **Markdown** here! Code blocks, bullet points, and math are supported:
-
-\`\`\`python
-def agent_loop():
-    print("Agent active")
-\`\`\`
-  `
-}
+```
+index.html            Page markup and all copy
+css/style.css         Design tokens + components (graphite / ice-blue)
+js/swarm.js           WebGL particle swarm (Three.js r128)
+js/app.js             Navigation, reveals, diagrams, writing list + reader
+js/blogs-data.js      Articles (Markdown)
+design-system/        Design system reference
 ```
 
----
+## Swarm formations
 
-## 🎨 Design System Tokens
+Each `<section>` declares which shape the swarm takes with `data-formation`:
 
-Detailed design guidelines and architectural tokens are stored in:
-- `design-system/genai-portfolio/MASTER.md`
-- `design-system/genai-portfolio/pages/home.md`
+| # | Section    | Shape                                   |
+|---|------------|-----------------------------------------|
+| 0 | Hero       | Sphere                                  |
+| 1 | Work       | Agent network — hubs joined by links    |
+| 2 | Expertise  | Four orbiting clusters                  |
+| 3 | Experience | Double helix                            |
+| 4 | Approach   | Torus (the feedback loop)               |
+| 5 | Writing    | Calm wave plane                         |
+| 6 | Contact    | Spiral galaxy                           |
+
+Shapes hold while a section is being read and morph across section boundaries.
+All animation runs in the vertex shader. The swarm pauses when the tab is
+hidden or the article reader is open, honours `prefers-reduced-motion`
+(still shapes, no drift), and the page works without WebGL.
+
+## Editing content
+
+All copy lives in `index.html`, grouped by clearly commented sections.
+
+- **Projects** — each `<article class="project">`. The architecture diagram is
+  generated from its `data-flow` attribute: columns separated by `>`,
+  parallel nodes by `,`. Add `data-loop` to draw a feedback arc.
+
+  ```html
+  <div class="diagram" data-flow="Query > Dense, Graph, ColBERT > Reranker > Top‑5"></div>
+  ```
+
+- **Experience** — each `<li class="role">` in the timeline.
+- **Articles** — add objects to `window.BLOG_POSTS` in `js/blogs-data.js`
+  (`id`, `slug`, `title`, `category`, `date`, `readTime`, `summary`, `tags`,
+  `content` in Markdown). Filter categories must match the `data-category`
+  values of the filter buttons. Articles deep-link as `#blog/<slug>`.
+- **Download CV** prints the Experience section through a dedicated print
+  stylesheet (save as PDF from the print dialog).
+
+## Deploy to GitHub Pages
+
+1. Push to GitHub.
+2. **Settings → Pages → Build and deployment → Deploy from a branch**, choose
+   your branch and `/ (root)`.
+
+## Dependencies (CDN)
+
+- Three.js r128 — cdnjs
+- Marked 12.0.2 — jsDelivr
+- Geist, Geist Mono, Instrument Serif — Google Fonts
