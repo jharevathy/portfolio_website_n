@@ -1,72 +1,40 @@
 # Nikhil Salunke — Portfolio
 
-A static, single-page portfolio for an applied AI engineer. A WebGL particle
-swarm forms a sphere in the hero and re-forms into a different shape for every
-section as you scroll; all reading content sits on frosted-glass panels so the
-swarm stays visible but never competes with the text.
-
-No build step — plain HTML, CSS and JavaScript, ready for GitHub Pages.
-
----
+A single-page portfolio built around a white-and-gold 3D particle swarm that
+re-forms for every section as you scroll. Plain HTML, CSS and JavaScript, no
+build step, ready for GitHub Pages.
 
 ## Structure
 
 ```
-index.html            Page markup and all copy
-css/style.css         Design tokens + components (graphite / ice-blue)
-js/swarm.js           WebGL particle swarm (Three.js r128)
-js/app.js             Navigation, reveals, diagrams, writing list + reader
-js/blogs-data.js      Articles (Markdown)
-design-system/        Design system reference
+index.html          The live site (markup, styles and the WebGL swarm engine)
+concept/index.html  The annotated review version of the design (scene captions + design primitives)
+design-system/      Design notes
 ```
 
-## Swarm formations
+## Scenes
 
-Each `<section>` declares which shape the swarm takes with `data-formation`:
+| # | Section | Swarm |
+|---|---------|-------|
+| 01 | Hero | Name forms from particles, then an exact rotating sphere |
+| 02 | Thesis | Trefoil knot |
+| 03 | Selected work | Orbit rings; each project is a body you can fly to |
+| 04 | Skills | Spiral galaxy; each skill domain is a star cluster |
+| 05 | Watch a query think | Vector space playing a RAG pipeline as you scroll |
+| 06 | Journey | Twisting stream with a ring per milestone |
+| 07 | Proof & writing | Rolling terrain |
+| 08 | Contact | Eclipse ring with outward gold waves |
 
-| # | Section    | Shape                                   |
-|---|------------|-----------------------------------------|
-| 0 | Hero       | Sphere                                  |
-| 1 | Work       | Agent network — hubs joined by links    |
-| 2 | Expertise  | Four orbiting clusters                  |
-| 3 | Experience | Double helix                            |
-| 4 | Approach   | Torus (the feedback loop)               |
-| 5 | Writing    | Calm wave plane                         |
-| 6 | Contact    | Spiral galaxy                           |
+Rendering: additive points with motion trails, a quarter-resolution bloom pass,
+depth-of-field bokeh, and cursor ripples. Honours `prefers-reduced-motion`
+(slower swarm, no intro or ripples) and falls back to a static page without WebGL.
 
-Shapes hold while a section is being read and morph across section boundaries.
-All animation runs in the vertex shader. The swarm pauses when the tab is
-hidden or the article reader is open, honours `prefers-reduced-motion`
-(still shapes, no drift), and the page works without WebGL.
+## Publish on GitHub Pages
 
-## Editing content
-
-All copy lives in `index.html`, grouped by clearly commented sections.
-
-- **Projects** — each `<article class="project">`. The architecture diagram is
-  generated from its `data-flow` attribute: columns separated by `>`,
-  parallel nodes by `,`. Add `data-loop` to draw a feedback arc.
-
-  ```html
-  <div class="diagram" data-flow="Query > Dense, Graph, ColBERT > Reranker > Top‑5"></div>
-  ```
-
-- **Experience** — each `<li class="role">` in the timeline.
-- **Articles** — add objects to `window.BLOG_POSTS` in `js/blogs-data.js`
-  (`id`, `slug`, `title`, `category`, `date`, `readTime`, `summary`, `tags`,
-  `content` in Markdown). Filter categories must match the `data-category`
-  values of the filter buttons. Articles deep-link as `#blog/<slug>`.
-- **Download CV** prints the Experience section through a dedicated print
-  stylesheet (save as PDF from the print dialog).
-
-## Deploy to GitHub Pages
-
-1. Push to GitHub.
-2. **Settings → Pages → Build and deployment → Deploy from a branch**, choose
-   your branch and `/ (root)`.
+Settings → Pages → Build and deployment → **Deploy from a branch** → choose the
+branch and `/ (root)` → Save. Free for public repositories.
 
 ## Dependencies (CDN)
 
-- Three.js r128 — cdnjs
-- Marked 12.0.2 — jsDelivr
-- Geist, Geist Mono, Instrument Serif — Google Fonts
+Three.js r128 (cdnjs), Lenis 1.1.13 (unpkg), Anton / Hanken Grotesk /
+JetBrains Mono (Google Fonts).
