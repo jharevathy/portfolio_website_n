@@ -117,17 +117,28 @@ main > :not(.skills) { pointer-events: auto; }
   position: relative;
   isolation: isolate;
   border-radius: var(--r-plate);
-  background: linear-gradient(180deg, var(--glass-top), var(--glass-bot)), var(--glass-tint);
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.07'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, var(--glass-top), var(--glass-bot)), var(--glass-tint);
   -webkit-backdrop-filter: blur(16px) saturate(150%);
   backdrop-filter: blur(16px) saturate(150%);
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.14),
-    inset 0 0 0 1px rgba(255,255,255,.06),
+    inset 0 1px 0 rgba(255,236,205,.16),
+    inset 0 0 0 1px rgba(255,255,255,.045),
     0 40px 90px -40px rgba(0,0,0,.85);
+}
+.glass::before { /* engraved edge: gold-lit along the top, fading down the sides */
+  content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1px; pointer-events: none;
+  background: linear-gradient(180deg, rgba(243,198,140,.62), rgba(243,198,140,.14) 18%, rgba(255,255,255,.05) 55%, rgba(255,255,255,.1));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude;
+  transition: background .5s;
 }
 .glass::after { /* specular sheen that follows the pointer */
   content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1;
-  background: radial-gradient(420px circle at var(--mx, 30%) var(--my, -20%), rgba(255,255,255,.08), transparent 45%);
+  background:
+    radial-gradient(460px circle at var(--mx, 30%) var(--my, -20%), rgba(255,236,208,.13), transparent 45%),
+    linear-gradient(115deg, transparent 34%, rgba(255,255,255,.035) 47%, transparent 60%);
 }
 
 .btn {
@@ -200,7 +211,7 @@ main > :not(.skills) { pointer-events: auto; }
 }
 .dock a svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 .dock a:hover { transform: translateY(-6px) scale(1.12); color: var(--paper); background: rgba(255,255,255,.08); }
-.dock a.on { color: var(--ink); background: var(--paper); }
+.dock a.on { color: var(--ink); background: linear-gradient(140deg, #fbe6c0, #e7b26b 55%, #c98d42); box-shadow: 0 0 26px -4px rgba(243,198,140,.55); }
 .dock a span {
   position: absolute; bottom: calc(100% + 12px); left: 50%; transform: translate(-50%, 6px);
   font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap;
@@ -255,6 +266,27 @@ main > :not(.skills) { pointer-events: auto; }
   animation: sheen 9s cubic-bezier(.65, 0, .35, 1) infinite alternate;
 }
 @keyframes sheen { from { background-position: 0% 50%; } to { background-position: 100% 50%; } }
+.foil {
+  background: linear-gradient(100deg, #b9823a 0%, #f3c68c 18%, #fff3dc 32%, #e9b467 46%, #b77a33 60%, #f7d49c 76%, #fff1d4 86%, #c98d42 100%);
+  background-size: 300% 100%; background-position: 100% 50%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  transition: background-position 2.4s cubic-bezier(.16, 1, .3, 1) .3s;
+}
+.foil.in, .in .foil { background-position: 0% 50%; }
+.rule { display: block; position: relative; width: 180px; height: 9px; margin-top: .28em; font-size: 16px; }
+.rule::before { content: ""; position: absolute; left: 14px; right: 0; top: 4px; height: 1px; background: linear-gradient(90deg, rgba(243,198,140,.9), rgba(243,198,140,0)); transform: scaleX(0); transform-origin: left; transition: transform 1.5s var(--ease-out) .45s; }
+.rule i { position: absolute; left: 0; top: 0; width: 9px; height: 9px; border: 1px solid #f3c68c; background: rgba(243,198,140,.18); transform: rotate(45deg) scale(0); transition: transform .9s var(--ease-out) .25s; }
+.rule.in::before, .in .rule::before { transform: none; }
+.rule.in i, .in .rule i { transform: rotate(45deg) scale(1); }
+.rule--center { margin-inline: auto; width: 240px; }
+.rule--center::before { left: 0; background: linear-gradient(90deg, transparent, rgba(243,198,140,.9) 50%, transparent); }
+.rule--center i { left: calc(50% - 4.5px); }
+.tsplit .w { display: inline-block; white-space: nowrap; vertical-align: top; padding-bottom: .1em; margin-bottom: -.1em; clip-path: inset(-.4em -3em 0 -3em); }
+.tsplit .ch { display: inline-block; transform: translate3d(0, 112%, 0); transition: transform 1.05s cubic-bezier(.16, 1, .3, 1); transition-delay: calc(var(--i) * 16ms); }
+.tsplit.in .ch { transform: none; }
+.hero__name { transition: opacity 1.2s var(--ease-out), filter 1.2s var(--ease-out); }
+.intro .hero__name { opacity: 0; filter: blur(10px); animation: introFail .01s 6s forwards; }
+@keyframes introFail { to { opacity: 1; filter: none; } }
 .hero__top { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
 .hero__bottom { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; }
 .hero__role { font-size: clamp(18px, 1.6vw, 24px); font-weight: 500; letter-spacing: -.01em; max-width: 30ch; }
@@ -268,9 +300,9 @@ main > :not(.skills) { pointer-events: auto; }
 
 /* 02 thesis */
 .thesis { padding-block: 24vh 26vh; display: grid; gap: 40vh; }
-.statement { font-size: calc(clamp(44px, 6.6vw, 112px) * var(--d-scale)); max-width: 15ch; }
+.statement { font-size: calc(clamp(44px, 6.6vw, 112px) * var(--d-scale)); max-width: 11em; }
 .statement--right { justify-self: end; text-align: right; }
-.statement em { font-style: normal; color: var(--accent); }
+.statement em { font-style: normal; }
 .thesis .scene-tag { margin-top: 28px; }
 .statement-wrap--right { display: flex; flex-direction: column; align-items: flex-end; text-align: right; }
 
@@ -288,6 +320,12 @@ main > :not(.skills) { pointer-events: auto; }
 .card__arrow { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1px var(--hair-2); transition: background .4s, color .4s, transform .5s var(--ease-out); }
 .card__arrow svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .card:hover .card__arrow { background: var(--paper); color: var(--ink); transform: rotate(45deg); }
+.card { cursor: pointer; }
+.work .head { transition: opacity .7s var(--ease-out); }
+.work.is-flying .head { opacity: .1; }
+.card:hover::before, .card.is-focus::before { background: linear-gradient(180deg, rgba(243,198,140,.95), rgba(243,198,140,.28) 30%, rgba(255,255,255,.06) 70%, rgba(243,198,140,.22)); }
+.card.is-focus { box-shadow: inset 0 1px 0 rgba(255,236,205,.2), 0 0 70px -14px rgba(243,198,140,.4), 0 40px 90px -40px rgba(0,0,0,.85); }
+.card.is-focus .card__arrow { background: linear-gradient(140deg, #fbe6c0, #e7b26b 55%, #c98d42); color: var(--ink); transform: rotate(45deg); }
 .card p { color: var(--paper-2); font-size: 15.5px; }
 .card .chips { margin-top: auto; }
 .more { margin-top: 18px; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 18px 22px; flex-wrap: wrap; }
@@ -317,6 +355,33 @@ main > :not(.skills) { pointer-events: auto; }
 .label3d.on, .label3d:hover { background: var(--paper); color: var(--ink); }
 .label3d.on i, .label3d:hover i { background: var(--ink); }
 .label3d.year { pointer-events: none; cursor: default; color: var(--accent); }
+
+/* 05 query — pinned; the swarm becomes a vector space */
+.rag { height: 440vh; }
+.rag__stage { position: sticky; top: 0; height: 100vh; height: 100svh; display: grid; grid-template-columns: minmax(0, 440px) minmax(0, 1fr); grid-template-rows: 1fr auto; gap: 20px; padding-block: 100px 108px; pointer-events: none; }
+.rag__stage > * { pointer-events: auto; }
+.rag__left { display: grid; gap: 22px; align-content: start; }
+.rag__head { margin: 0; grid-template-columns: 1fr; gap: 14px; }
+.rag .h2 { font-size: calc(clamp(40px, 4.6vw, 78px) * var(--d-scale)); }
+.rag__steps { display: grid; gap: 4px; }
+.rag__steps li { display: grid; grid-template-columns: 34px 1fr; gap: 10px; padding: 10px 12px; border-radius: 14px; opacity: .42; transition: opacity .5s, background .5s, box-shadow .5s; }
+.rag__steps li > span { font-family: var(--f-mono); font-size: 11.5px; color: var(--paper-3); padding-top: 3px; }
+.rag__steps li strong { display: block; font-weight: 600; font-size: 16px; letter-spacing: -.01em; }
+.rag__steps li small { display: block; color: var(--paper-2); font-size: 13.5px; line-height: 1.45; }
+.rag__steps li.done { opacity: .7; }
+.rag__steps li.on { opacity: 1; background: rgba(243,198,140,.07); box-shadow: inset 0 0 0 1px rgba(243,198,140,.28); }
+.rag__steps li.on > span { color: var(--accent); }
+.rag__card { grid-column: 2; grid-row: 2; justify-self: end; width: min(460px, 100%); padding: 22px 24px; display: grid; gap: 12px; }
+.rag__q { font-size: 17px; font-weight: 500; letter-spacing: -.01em; }
+.rag__ans { display: grid; gap: 8px; border-top: 1px solid var(--hair); padding-top: 12px; }
+#rag-answer { min-height: 4.8em; color: var(--paper); font-size: 15.5px; line-height: 1.55; }
+#rag-answer.typing::after { content: ""; display: inline-block; width: 8px; height: 1.05em; margin-left: 2px; vertical-align: -2px; background: var(--accent); animation: blink .9s steps(2) infinite; }
+@keyframes blink { 50% { opacity: 0; } }
+.rag__badge { color: var(--accent); margin-left: 8px; opacity: 0; transition: opacity .6s; }
+.rag[data-stage="3"] .rag__badge { opacity: 1; }
+.rag__src .chip { opacity: .28; transition: opacity .5s, box-shadow .5s, color .5s; }
+.rag[data-stage="2"] .rag__src .chip, .rag[data-stage="3"] .rag__src .chip { opacity: 1; color: var(--accent); box-shadow: inset 0 0 0 1px rgba(243,198,140,.45); }
+html.no-gl .rag { height: auto; } html.no-gl .rag__stage { position: static; height: auto; }
 
 /* 05 journey — pinned road; cards positioned by JS from 3D anchors */
 .journey { height: 520vh; }
@@ -355,7 +420,7 @@ html.no-gl .milestone { position: static; opacity: 1; visibility: visible; trans
 .socials { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
 .socials a { position: relative; color: var(--paper-2); font-weight: 500; transition: color .3s; }
 .socials a::after { content: ""; position: absolute; left: 0; right: 0; bottom: -4px; height: 1px; background: currentColor; transform: scaleX(0); transform-origin: right; transition: transform .5s var(--ease-out); }
-.socials a:hover { color: var(--paper); }
+.socials a:hover { color: var(--accent); }
 .socials a:hover::after { transform: scaleX(1); transform-origin: left; }
 
 /* 08 primitives */
@@ -391,6 +456,9 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
 /* ---------- responsive ---------- */
 @media (max-width: 1100px) {
   .rail { display: none; }
+  .rag__stage { grid-template-columns: 1fr; grid-template-rows: auto 1fr auto; }
+  .rag__card { grid-column: 1; grid-row: 3; justify-self: stretch; width: auto; }
+  .rag__steps li small { display: none; }
   .cards { grid-template-columns: 1fr 1fr; }
   .cards .card:last-child { grid-column: span 2; min-height: 0; }
   .skills__inner { grid-template-columns: 1fr; position: relative; top: 0; }
@@ -400,6 +468,9 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
 }
 @media (max-width: 720px) {
   body { font-size: 16px; }
+  .rag__steps { grid-template-columns: 1fr 1fr; }
+  .rag .scene-tag { display: none; }
+  .rag__card { padding: 16px 18px; }
   .topbar .scene-now, .topbar .btn--ghost { display: none; }
   .hero { padding-block: 104px 150px; }
   .hero__bottom { grid-template-columns: 1fr; }
@@ -424,6 +495,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
 </style>
 
 <canvas id="stage" aria-hidden="true"></canvas>
+<script>try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !location.hash) document.documentElement.classList.add('intro'); } catch (e) {}</script>
 <div class="labels" id="labels" aria-hidden="true"></div>
 <div class="cursor" id="cursor" aria-hidden="true"></div>
 
@@ -456,7 +528,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     <div class="wrap hero__bottom">
       <div style="display:grid;gap:18px">
         <p class="hero__role">GenAI Architect at Vodafone Idea, building production‑grade AI systems with measurable outcomes.</p>
-        <p class="scene-tag"><b>Scene 01 · Sphere</b> Rotates continuously and breathes. Your cursor sends ripples through it; a click sends a shockwave.</p>
+        <p class="scene-tag"><b>Scene 01 · Sphere</b> On load, scattered light gathers into your name, then folds into the sphere. It turns continuously; your cursor sends ripples through it and a click sends a shockwave.</p>
       </div>
       <div class="scrollcue mono"><i></i>Scroll</div>
     </div>
@@ -465,38 +537,38 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   <!-- 02 THESIS — neural lattice -->
   <section class="scene wrap thesis" id="s-thesis" data-scene="1" data-name="Knot">
     <div>
-      <h2 class="display statement">Building production‑grade <em>AI systems</em> with measurable outcomes.</h2>
+      <h2 class="display statement" data-reveal>Building production‑grade <em class="foil">AI systems</em> with measurable outcomes.</h2>
       <p class="scene-tag"><b>Scene 02 · Knot</b> The sphere unwinds into a trefoil knot, one continuous loop woven through itself. Particles stream along it and gold pulses travel the loop while the camera circles.</p>
     </div>
     <div class="statement-wrap--right">
-      <h2 class="display statement statement--right">Expertise in <em>RAG, agentic AI</em>, LLM optimisation and AI product engineering.</h2>
+      <h2 class="display statement statement--right" data-reveal>Expertise in <em class="foil">RAG, agentic AI,</em> LLM optimisation and AI product engineering.</h2>
     </div>
   </section>
 
   <!-- 03 WORK — orbit -->
   <section class="scene wrap work" id="s-work" data-scene="2" data-name="Orbit">
     <div class="head">
-      <h2 class="display h2">Selected<br>work</h2>
-      <p class="count">10 projects</p>
-      <p class="scene-tag"><b>Scene 03 · Orbit</b> Particles stream into a tilted three‑ring orbit that turns with your scroll. Cards tilt toward the cursor.</p>
+      <h2 class="display h2" data-reveal>Selected<br>work<span class="rule" aria-hidden="true"><i></i></span></h2>
+      <p class="count foil">10 projects</p>
+      <p class="scene-tag"><b>Scene 03 · Orbit</b> Each project is a glowing body on a tilted three‑ring orbit. Hover a card and its body flares gold; click it and the camera flies there (click again or press Esc to return).</p>
     </div>
     <div class="cards">
       <article class="card glass" data-tilt>
-        <div class="card__top"><span class="card__idx">01</span><span class="card__arrow"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg></span></div>
+        <div class="card__top"><span class="card__idx foil">01</span><span class="card__arrow"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg></span></div>
         <p class="mono">Multi‑agent system · Automation</p>
         <h3 class="h3">Agentic Orchestrator</h3>
         <p>Specialised planner and worker agents orchestrate complex web interactions and data extraction pipelines without manual intervention.</p>
         <ul class="chips"><li class="chip">Playwright</li><li class="chip">LLM</li><li class="chip">Lightpanda</li><li class="chip">Python</li></ul>
       </article>
       <article class="card glass" data-tilt>
-        <div class="card__top"><span class="card__idx">02</span><span class="card__arrow"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg></span></div>
+        <div class="card__top"><span class="card__idx foil">02</span><span class="card__arrow"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg></span></div>
         <p class="mono">vLLM · Local inference · Private AI</p>
         <h3 class="h3">Private LLM Engine</h3>
         <p>High‑throughput, low‑latency local hosting of open‑weight models, bypassing third‑party APIs for zero data leakage.</p>
         <ul class="chips"><li class="chip">vLLM</li><li class="chip">SmolLM</li><li class="chip">Docker</li><li class="chip">FastAPI</li></ul>
       </article>
       <article class="card glass" data-tilt>
-        <div class="card__top"><span class="card__idx">03</span><span class="card__arrow"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg></span></div>
+        <div class="card__top"><span class="card__idx foil">03</span><span class="card__arrow"><svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg></span></div>
         <p class="mono">GenAI · Enterprise security</p>
         <h3 class="h3">Enterprise RAG Guard</h3>
         <p>Retrieval with role‑based access control at the embedding level, so people only retrieve documents they are authorised to see.</p>
@@ -513,26 +585,53 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   <section class="scene wrap skills" id="s-skills" data-scene="3" data-name="Galaxy">
     <div class="skills__inner">
       <div class="head" style="margin:0">
-        <h2 class="display h2">Skills</h2>
-        <p class="count">14 domains</p>
+        <h2 class="display h2" data-reveal>Skills<span class="rule" aria-hidden="true"><i></i></span></h2>
+        <p class="count foil">14 domains</p>
         <p class="scene-tag"><b>Scene 04 · Galaxy</b> A spiral galaxy turns slowly: white‑hot core, gold arms. Each skill domain is a star cluster on the arms. Hover or tap one and it flares gold.</p>
         <div class="chips domain-list" id="domain-list"></div>
       </div>
       <aside class="skillpanel glass" aria-live="polite">
         <p class="mono">Domain</p>
-        <h3 id="sk-name">RAG</h3>
+        <h3 id="sk-name" class="foil">RAG</h3>
         <ul id="sk-list"></ul>
       </aside>
     </div>
   </section>
 
-  <!-- 05 JOURNEY — road (pinned; cards are anchored to the arches in 3D) -->
-  <section class="scene journey" id="s-journey" data-scene="4" data-name="Stream">
+  <!-- 05 QUERY — pinned; one question travels through a RAG pipeline -->
+  <section class="scene rag" id="s-rag" data-scene="4" data-name="Query">
+    <div class="rag__stage wrap">
+      <div class="rag__left">
+        <div class="head rag__head">
+          <h2 class="display h2" data-reveal>Watch a query <span class="foil">think</span><span class="rule" aria-hidden="true"><i></i></span></h2>
+          <p class="scene-tag"><b>Scene 05 · Query</b> Scroll to send one question through a retrieval pipeline. The swarm becomes a vector space, the nearest passages light up, the best five are pulled forward and the answer writes itself.</p>
+        </div>
+        <ol class="rag__steps">
+          <li><span>01</span><div><strong>Query</strong><small>A question enters the system.</small></div></li>
+          <li><span>02</span><div><strong>Embed &amp; retrieve</strong><small>It lands in vector space and its nearest passages light up.</small></div></li>
+          <li><span>03</span><div><strong>Rerank</strong><small>A cross‑encoder pulls the best five forward.</small></div></li>
+          <li><span>04</span><div><strong>Generate</strong><small>The answer is written from those five, with citations.</small></div></li>
+        </ol>
+      </div>
+      <div class="rag__card glass" aria-live="polite">
+        <p class="mono">Query · illustration</p>
+        <p class="rag__q">“How do we stop our RAG assistant hallucinating on policy questions?”</p>
+        <div class="rag__ans">
+          <p class="mono">Answer <span class="rag__badge">grounded · 5 sources</span></p>
+          <p id="rag-answer"></p>
+        </div>
+        <ul class="chips rag__src"><li class="chip">[1] Hybrid retrieval</li><li class="chip">[2] BM25 + dense</li><li class="chip">[3] Reranking</li><li class="chip">[4] Grounding</li><li class="chip">[5] Evaluation</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 JOURNEY — stream (pinned; cards are anchored to the rings in 3D) -->
+  <section class="scene journey" id="s-journey" data-scene="5" data-name="Stream">
     <div class="journey__stage wrap">
       <div class="head journey__head">
-        <h2 class="display h2">The<br>journey</h2>
+        <h2 class="display h2" data-reveal>The<br><span class="foil">journey</span><span class="rule" aria-hidden="true"><i></i></span></h2>
         <p class="lede">From designing microstrip antennas to shipping AI solutions.</p>
-        <p class="scene-tag"><b>Scene 05 · Stream</b> The section pins. Scrolling carries you along a broad, twisting ribbon of light; each milestone is a ring it flows through, with its card beside it.</p>
+        <p class="scene-tag"><b>Scene 06 · Stream</b> The section pins. Scrolling carries you along a broad, twisting ribbon of light; each milestone is a ring it flows through, with its card beside it.</p>
       </div>
     </div>
     <ol class="milestones">
@@ -544,11 +643,11 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   </section>
 
   <!-- 06 PROOF + WRITING — terrain -->
-  <section class="scene wrap proof" id="s-proof" data-scene="5" data-name="Terrain">
+  <section class="scene wrap proof" id="s-proof" data-scene="6" data-name="Terrain">
     <div class="head" style="margin-bottom:22px">
-      <h2 class="display h2">Proof &amp;<br>writing</h2>
-      <p class="count">5 · 3</p>
-      <p class="scene-tag"><b>Scene 06 · Terrain</b> A calm, rolling field settles low in the frame so long‑form reading stays quiet.</p>
+      <h2 class="display h2" data-reveal>Proof &amp;<br>writing<span class="rule" aria-hidden="true"><i></i></span></h2>
+      <p class="count foil">5 · 3</p>
+      <p class="scene-tag"><b>Scene 07 · Terrain</b> A calm, rolling field settles low in the frame so long‑form reading stays quiet.</p>
     </div>
     <div class="split">
       <div class="certs glass">
@@ -573,8 +672,9 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   </section>
 
   <!-- 07 CONTACT — vortex -->
-  <section class="scene wrap contact" id="s-contact" data-scene="6" data-name="Eclipse">
-    <h2 class="display contact__title">Let’s work<br><span class="gold">together</span></h2>
+  <section class="scene wrap contact" id="s-contact" data-scene="7" data-name="Eclipse">
+    <h2 class="display contact__title" data-reveal>Let’s work<br><span class="gold">together</span></h2>
+    <span class="rule rule--center" aria-hidden="true"><i></i></span>
     <div class="contact__body">
       <p class="lede" style="margin-inline:auto">Hey, would love to connect and brainstorm to create and ship a production‑grade AI system.</p>
       <div class="mailrow">
@@ -586,15 +686,15 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
         <a href="https://linkedin.com/in/nikhil-t-salunke" target="_blank" rel="noopener">LinkedIn ↗</a>
         <a href="https://niksalunke.github.io/portfolio/resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
       </div>
-      <p class="scene-tag" style="justify-content:center"><b>Scene 07 · Eclipse</b> A white‑hot ring turns around the invitation while gold waves pulse outward through the corona.</p>
+      <p class="scene-tag" style="justify-content:center"><b>Scene 08 · Eclipse</b> A white‑hot ring turns around the invitation while gold waves pulse outward through the corona.</p>
     </div>
   </section>
 
   <!-- 08 PRIMITIVES -->
-  <section class="scene wrap prims" id="s-prims" data-scene="6" data-name="Primitives">
+  <section class="scene wrap prims" id="s-prims" data-scene="7" data-name="Primitives">
     <div class="head" style="margin-bottom:6px">
-      <h2 class="display h2">Design<br>primitives</h2>
-      <p class="lede">The system every screen above is built from: Cinematic type, white‑and‑gold light.</p>
+      <h2 class="display h2" data-reveal>Design<br>primitives<span class="rule" aria-hidden="true"><i></i></span></h2>
+      <p class="lede">The system every screen above is built from: Cinematic type, white‑and‑gold light, gold used only where it means something.</p>
     </div>
     <div class="prims__grid">
       <div class="prim glass p-type">
@@ -635,21 +735,21 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
           <div><dt>UI duration</dt><dd>400–600 ms</dd></div>
           <div><dt>Ripple speed</dt><dd>12 u/s, 2.5 s decay</dd></div>
           <div><dt>Idle sphere spin</dt><dd>≈ 22 s / turn</dd></div>
-          <div><dt>Shape hold</dt><dd>whole section</dd></div>
-          <div><dt>Reduced motion</dt><dd>slow, no trails</dd></div>
+          <div><dt>Bloom</dt><dd>¼‑res, 2 blur passes</dd></div>
+          <div><dt>Depth of field</dt><dd>bokeh inside 13 u</dd></div>
         </dl>
       </div>
       <div class="prim glass p-glass">
         <p class="mono">Surfaces</p>
-        <div class="glass mini-plate"><p class="h3">Liquid glass plate</p><p class="controls__note" style="margin-top:6px">16px blur, light top edge, pointer‑tracked sheen. Used only where text sits.</p></div>
+        <div class="glass mini-plate"><p class="h3">Liquid glass plate</p><p class="controls__note" style="margin-top:6px">16px blur, frosted grain, gold‑lit top edge and a pointer‑tracked sheen. Used only where text sits.</p></div>
         <p class="controls__note">Radii: 22 plates · 14 swatches · pill for every control.</p>
       </div>
       <div class="prim glass p-data">
         <p class="mono">Figures</p>
         <div class="row-flex" style="gap:36px">
-          <div class="metric"><b>2000+</b><span>hours on LLM depth</span></div>
-          <div class="metric"><b>10</b><span>shipped projects</span></div>
-          <div class="metric"><b>14</b><span>skill domains</span></div>
+          <div class="metric"><b class="foil">2000+</b><span>hours on LLM depth</span></div>
+          <div class="metric"><b class="foil">10</b><span>shipped projects</span></div>
+          <div class="metric"><b class="foil">14</b><span>skill domains</span></div>
         </div>
       </div>
     </div>
@@ -662,9 +762,9 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   <a href="#s-hero" data-jump data-dock="0"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="2.5"/></svg><span>Home</span></a>
   <a href="#s-work" data-jump data-dock="2"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><path d="M3.5 9.5h17"/></svg><span>Work</span></a>
   <a href="#s-skills" data-jump data-dock="3"><svg viewBox="0 0 24 24"><circle cx="6" cy="7" r="2"/><circle cx="18" cy="6" r="2"/><circle cx="12" cy="17" r="2.5"/><path d="M7.6 8.3 10.6 15M16.6 7.5l-3.4 7.7M8 7l8-.6"/></svg><span>Skills</span></a>
-  <a href="#s-journey" data-jump data-dock="4"><svg viewBox="0 0 24 24"><path d="M4 18c4 0 4-6 8-6s4-6 8-6"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span>Journey</span></a>
-  <a href="#s-proof" data-jump data-dock="5"><svg viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6z"/><path d="M9 11h6M9 15h6"/></svg><span>Writing</span></a>
-  <a href="#s-contact" data-jump data-dock="6"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg><span>Contact</span></a>
+  <a href="#s-journey" data-jump data-dock="5"><svg viewBox="0 0 24 24"><path d="M4 18c4 0 4-6 8-6s4-6 8-6"/><circle cx="4" cy="18" r="1.6"/><circle cx="20" cy="6" r="1.6"/></svg><span>Journey</span></a>
+  <a href="#s-proof" data-jump data-dock="6"><svg viewBox="0 0 24 24"><path d="M6 4h9l3 3v13H6z"/><path d="M9 11h6M9 15h6"/></svg><span>Writing</span></a>
+  <a href="#s-contact" data-jump data-dock="7"><svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z"/><path d="m4 7 8 6 8-6"/></svg><span>Contact</span></a>
 </nav>
 
 <p class="motion-note glass" id="motion-note" hidden>Your system has “reduce motion” turned on, so the swarm is slowed and ripples are off.</p>
@@ -699,27 +799,27 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     ['Architecture', 16, 'System Design;API Contracts;Event-driven Pipelines;Scalable Backends;Design for Reliability;Service Observability']
   ];
   var MILESTONES = [['2019', 22], ['2021', 36], ['2023', 50], ['Now', 64]];
+  var ANSWER = 'Widen recall with hybrid retrieval (BM25 + dense), keep only the five passages a cross‑encoder ranks highest, then answer strictly from them: cite every claim, and decline when no passage supports it.';
 
-
-
+  // scene indices
+  var SC = { sphere: 0, knot: 1, orbit: 2, galaxy: 3, query: 4, stream: 5, terrain: 6, eclipse: 7 };
+  var LAST = 7;
 
   /* ================= smooth scroll ================= */
   var lenis = null;
-  if (window.Lenis && !reduce) {
-    lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
-  }
+  if (window.Lenis && !reduce) lenis = new Lenis({ lerp: 0.09, smoothWheel: true });
+  function scrollToEl(t) { if (lenis) lenis.scrollTo(t, { duration: 1.6 }); else t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' }); }
   $$('[data-jump]').forEach(function (a) {
     a.addEventListener('click', function (e) {
       var t = document.querySelector(a.getAttribute('href'));
       if (!t) return;
-      e.preventDefault();
-      if (lenis) lenis.scrollTo(t, { duration: 1.6 }); else t.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+      e.preventDefault(); scrollToEl(t);
     });
   });
 
   /* ================= scenes, rail, dock ================= */
   var sections = $$('[data-scene]');
-  var NAMES = ['Sphere', 'Knot', 'Orbit', 'Galaxy', 'Stream', 'Terrain', 'Eclipse'];
+  var NAMES = ['Sphere', 'Knot', 'Orbit', 'Galaxy', 'Query', 'Stream', 'Terrain', 'Eclipse'];
   var rail = $('#rail');
   sections.forEach(function (s, i) {
     if (s.id === 's-prims') return;
@@ -727,7 +827,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     b.type = 'button';
     b.innerHTML = s.dataset.name + '<i></i>';
     b.setAttribute('aria-label', 'Go to ' + s.dataset.name);
-    b.addEventListener('click', function () { if (lenis) lenis.scrollTo(s, { duration: 1.6 }); else s.scrollIntoView(); });
+    b.addEventListener('click', function () { scrollToEl(s); });
     b.dataset.idx = i;
     rail.appendChild(b);
   });
@@ -739,50 +839,59 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   var renderer;
   try { renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: false, alpha: false, powerPreference: 'high-performance' }); }
   catch (e) { renderer = null; }
+  if (!renderer) { root.classList.add('no-gl'); root.classList.remove('intro'); }
 
   var W = window.innerWidth;
-  var mobile = W < 720;                                   // layout is stacked (affects framing offsets only)
-  var portrait = window.innerWidth / window.innerHeight < 0.95;
-  var narrow = W <= 1100;                                  // skills panel stacks below the galaxy  // only tall screens shrink the 3D world
+  var mobile = W < 720;                                          // stacked layout (framing offsets only)
+  var portrait = window.innerWidth / window.innerHeight < 0.95;  // only tall screens shrink the 3D world
+  var narrow = W <= 1100;                                        // skills panel stacks below the galaxy
   var N = portrait ? 7000 : Math.max(W, window.innerHeight) < 1100 ? 11000 : 15000;
   if ((navigator.hardwareConcurrency || 8) <= 4) N = Math.round(N * 0.7);
   var DPR = Math.min(window.devicePixelRatio || 1, portrait ? 1.5 : 1.75);
   var BG = new THREE.Color('#05060a');
-
-  if (renderer) {
-    renderer.setPixelRatio(DPR);
-    renderer.autoClear = false;
-  }
+  if (renderer) { renderer.setPixelRatio(DPR); renderer.autoClear = false; }
 
   function rng(seed) { return function () { seed |= 0; seed = seed + 0x6d2b79f5 | 0; var t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
   function gauss(r) { var u = 1 - r(), v = r(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(6.2831853 * v); }
 
   /* ---------- formations ---------- */
-  var S = portrait ? 0.62 : 1;         // world scale for tall (phone) screens
-  var bufs = []; for (var f = 0; f < 7; f++) bufs.push(new Float32Array(N * 3));
-  var aR = new Float32Array(N * 4);
-  var aK = new Float32Array(N * 3);   // x: armillary ring id (14 = core), y: stream type, z: eclipse type
-  (function () { var r = rng(3); for (var i = 0; i < N; i++) { aR[i*4] = r(); aR[i*4+1] = r(); aR[i*4+2] = r(); aR[i*4+3] = 0; } })();
+  var S = portrait ? 0.62 : 1;
+  var bufs = []; for (var f = 0; f <= LAST; f++) bufs.push(new Float32Array(N * 3));
+  var aR = new Float32Array(N * 4);   // x stagger, y size/phase, z colour/twinkle, w orbit project body (0 none, 1..3)
+  var aK = new Float32Array(N * 4);   // x galaxy cluster (14 = field), y stream type, z eclipse type, w query role
+  var aI = new Float32Array(N * 4);   // intro: name-text position + heat
+  (function () { var r = rng(3); for (var i = 0; i < N; i++) { aR[i*4] = r(); aR[i*4+1] = r(); aR[i*4+2] = r(); aR[i*4+3] = 0; aI[i*4+3] = .05; } })();
   function put(b, i, x, y, z) { b[i*3] = x; b[i*3+1] = y; b[i*3+2] = z; }
 
-  // 0 sphere
-  (function () { var b = bufs[0], r = rng(11), R = 8.2 * S, G = Math.PI * (3 - Math.sqrt(5));
-    for (var i = 0; i < N; i++) { var y = 1 - (i + .5) / N * 2, rad = Math.sqrt(1 - y*y), th = G * i, s = R;
-      put(b, i, Math.cos(th) * rad * s, y * s, Math.sin(th) * rad * s); } })();
+  // 0 sphere — exact Fibonacci sphere
+  (function () { var b = bufs[0], R = 8.2 * S, G = Math.PI * (3 - Math.sqrt(5));
+    for (var i = 0; i < N; i++) { var y = 1 - (i + .5) / N * 2, rad = Math.sqrt(1 - y*y), th = G * i;
+      put(b, i, Math.cos(th) * rad * R, y * R, Math.sin(th) * rad * R); } })();
 
-  // 1 knot: a trefoil tube; p1 = (u0 along the knot, angle around the tube, radius from the tube centre)
+  // 1 knot — trefoil tube: (u along knot, angle around tube, radius)
   (function () { var b = bufs[1], r = rng(21);
     for (var i = 0; i < N; i++) { var core = r() < .72, rad = core ? Math.sqrt(r()) * .42 : .42 + Math.abs(gauss(r)) * .55;
       put(b, i, r(), r() * 6.2831853, rad); } })();
 
-  // 2 orbit: three rings + dust disc (local xz-plane)
+  // 2 orbit — three rings + dust, plus three project bodies (aR.w = 1..3)
+  var BODY_R = 10, BODY_A = [0.6, 2.69, 4.79];
   (function () { var b = bufs[2], r = rng(31), radii = [7.5, 10, 12.8];
-    for (var i = 0; i < N; i++) { var a = r() * 6.2831853, q = r(), rad, y;
+    for (var i = 0; i < N; i++) {
+      if (r() < .13) { var j = (r() * 3) | 0, ang = BODY_A[j];
+        put(b, i, (Math.cos(ang) * BODY_R + gauss(r) * .55) * S, gauss(r) * .55 * S, (Math.sin(ang) * BODY_R + gauss(r) * .55) * S); aR[i*4+3] = j + 1; continue; }
+      var a = r() * 6.2831853, q = r(), rad, y;
       if (q < .72) { var k = (r()*3)|0; rad = (radii[k] + gauss(r) * (.12 + k*.05)) * S; y = gauss(r) * .07; }
       else { rad = (5 + r() * 9.5) * S; y = gauss(r) * .3; }
       put(b, i, Math.cos(a) * rad, y, Math.sin(a) * rad); } })();
+  function bodyWorld(j, t, out) {
+    var R = BODY_R * S, x = Math.cos(BODY_A[j]) * R, z = Math.sin(BODY_A[j]) * R, a = t * (0.9 / (1 + R * 0.25));
+    var c = Math.cos(a), s = Math.sin(a), x1 = c * x + s * z, z1 = -s * x + c * z;
+    var c5 = Math.cos(.5), s5 = Math.sin(.5), y2 = -s5 * z1, z2 = c5 * z1;
+    var cz = Math.cos(.18), sz = Math.sin(.18);
+    return out.set(cz * x1 - sz * y2, sz * x1 + cz * y2, z2);
+  }
 
-  // 3 galaxy: bright core, three log-spiral arms, dusty disc; 14 skill-domain clusters sit on the arms (aK.x = id, 14 = field)
+  // 3 galaxy — core, three log-spiral arms, disc; 14 domain clusters on the arms
   var CLUSTERS = [];
   (function () { var b = bufs[3], r = rng(41), M = DOMAINS.length, ARMS = 3, WIND = .42, i, GS = S * 1.05;
     for (i = 0; i < M; i++) { var rr = 3.2 + i / (M - 1) * 9.2, th = (i % ARMS) * 2.0944 + rr * WIND + .25;
@@ -790,38 +899,61 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     var tot = 0, cum = [], acc = 0; DOMAINS.forEach(function (d) { tot += .6 + d[1] / 72; });
     DOMAINS.forEach(function (d) { acc += (.6 + d[1] / 72) / tot; cum.push(acc); });
     for (i = 0; i < N; i++) { var q = r(), x, y, z;
-      aK[i*3] = 14;
-      if (q < .17) { var cr = Math.abs(gauss(r)) * 1.5; var ca = r() * 6.2831853; x = Math.cos(ca) * cr; z = Math.sin(ca) * cr; y = gauss(r) * .45 * Math.exp(-cr * .5); }
+      aK[i*4] = 14;
+      if (q < .17) { var cr = Math.abs(gauss(r)) * 1.5, ca = r() * 6.2831853; x = Math.cos(ca) * cr; z = Math.sin(ca) * cr; y = gauss(r) * .45 * Math.exp(-cr * .5); }
       else if (q < .79) { var ar = 1.2 + Math.pow(r(), .85) * 12.8, arm = (i % ARMS) * 2.0944, sp = gauss(r) * (.09 + ar * .011);
         var th2 = arm + ar * WIND + sp; x = Math.cos(th2) * ar; z = Math.sin(th2) * ar; y = gauss(r) * .16 * (1.2 - ar / 16); }
       else if (q < .87) { var dr = Math.pow(r(), .7) * 14.5, dth = r() * 6.2831853; x = Math.cos(dth) * dr; z = Math.sin(dth) * dr; y = gauss(r) * .12; }
       else { var qq = r(), c = 0; while (c < M - 1 && qq > cum[c]) c++;
-        var C = CLUSTERS[c], cs = (.28 + DOMAINS[c][1] / 72 * .55); x = C[0] / GS + gauss(r) * cs; z = C[2] / GS + gauss(r) * cs; y = gauss(r) * cs * .5; aK[i*3] = c; }
+        var C = CLUSTERS[c], cs = (.28 + DOMAINS[c][1] / 72 * .55); x = C[0] / GS + gauss(r) * cs; z = C[2] / GS + gauss(r) * cs; y = gauss(r) * cs * .5; aK[i*4] = c; }
       put(b, i, x * GS, y * GS, z * GS); } })();
 
-  // 4 stream: a broad twisting ribbon of light (s, lateral, vertical) along a curve; aK.y = 1 marks milestone rings
+  // 4 query — a vector space of ~70 passage clusters plus dust. Roles in aK.w:
+  //   0 dust, 0.6 passage, 1 retrieved passage, 2.0–2.4 top-5 passage (rank in tenths; p4 holds the offset
+  //   from its centre, centre in uTop), 3 retrieval stream (p4 = passage centre), 4 the query itself
+  var QPOS = [1.5 * S, .5 * S, 4 * S], TOP = [];
+  (function () { var b = bufs[4], r = rng(81), i, P = [], NP = 72;
+    for (i = 0; i < NP; i++) {
+      var near = i < 9;
+      P.push(near ? [(QPOS[0] / S + 2.4 + gauss(r) * 2.2) * S, (QPOS[1] / S + gauss(r) * 2.0) * S, (QPOS[2] / S - 3.2 + gauss(r) * 2.0) * S]
+                  : [(r() * 2 - 1) * 14 * S, (r() * 2 - 1) * 7.5 * S, (-12 + r() * 14) * S]);
+    }
+    var order = P.map(function (c, j) { var dx = c[0] - QPOS[0], dy = c[1] - QPOS[1], dz = c[2] - QPOS[2]; return [dx*dx + dy*dy + dz*dz, j]; })
+      .sort(function (a, c) { return a[0] - c[0]; }).map(function (x) { return x[1]; });
+    var rankOf = {}; order.forEach(function (j, k) { rankOf[j] = k; });
+    for (i = 0; i < 5; i++) TOP.push(P[order[i]]);
+    var RET = order.slice(0, 12);
+    for (i = 0; i < N; i++) { var q = r();
+      if (q < .04) { put(b, i, gauss(r) * .3 * S, gauss(r) * .3 * S, gauss(r) * .3 * S); aK[i*4+3] = 4; }
+      else if (q < .16) { var e = P[RET[(r() * RET.length) | 0]]; put(b, i, e[0], e[1], e[2]); aK[i*4+3] = 3; }
+      else if (q < .4) { put(b, i, (r() * 2 - 1) * 16 * S, (r() * 2 - 1) * 9 * S, (-14 + r() * 18) * S); aK[i*4+3] = 0; }
+      else { var j = (r() * NP) | 0, c = P[j], ox = gauss(r) * .34 * S, oy = gauss(r) * .34 * S, oz = gauss(r) * .34 * S, rk = rankOf[j];
+        if (rk < 5) { put(b, i, ox, oy, oz); aK[i*4+3] = 2 + rk * .1; }
+        else { put(b, i, c[0] + ox, c[1] + oy, c[2] + oz); aK[i*4+3] = rk < 12 ? 1 : .6; } } } })();
+
+  // 5 stream — broad twisting ribbon (s, lateral, vertical); aK.y = 1 marks milestone rings
   var ROAD_L = 84;
   function roadC(s) { return [Math.sin(s * .075) * 7 * S + Math.sin(s * .021) * 3 * S, -2.4, 8 - s]; }
   function roadLat(s) { var d = .075 * 7 * S * Math.cos(s * .075) + .021 * 3 * S * Math.cos(s * .021), l = Math.sqrt(1 + d * d); return [1 / l, 0, d / l]; }
-  (function () { var b = bufs[4], r = rng(51);
+  (function () { var b = bufs[5], r = rng(51);
     for (var i = 0; i < N; i++) {
       if (r() < .13) { var m = MILESTONES[(r() * MILESTONES.length) | 0], th = r() * 6.2831853, R = 3.7 * (1 + gauss(r) * .01);
-        put(b, i, m[1] + gauss(r) * .04, Math.cos(th) * R, Math.sin(th) * R); aK[i*3+1] = 1; }
-      else { put(b, i, r() * ROAD_L, gauss(r) * .62, gauss(r)); aK[i*3+1] = 0; } } })();
+        put(b, i, m[1] + gauss(r) * .04, Math.cos(th) * R, Math.sin(th) * R); aK[i*4+1] = 1; }
+      else { put(b, i, r() * ROAD_L, gauss(r) * .62, gauss(r)); aK[i*4+1] = 0; } } })();
 
-  // 5 terrain: grid plane (x, 0, z)
-  (function () { var b = bufs[5], r = rng(61), w = 64 * S, d = 52, cols = Math.ceil(Math.sqrt(N * w / d)), rows = Math.ceil(N / cols);
+  // 6 terrain — grid plane
+  (function () { var b = bufs[6], r = rng(61), w = 64 * S, d = 52, cols = Math.ceil(Math.sqrt(N * w / d)), rows = Math.ceil(N / cols);
     for (var i = 0; i < N; i++) { var cx = i % cols, cz = (i / cols) | 0; put(b, i, (cx/(cols-1) - .5) * w + (r()-.5)*.1, 0, 10 - cz/(rows-1) * d + (r()-.5)*.1); } })();
 
+  // 7 eclipse — rotating ring, corona filaments, concentric waves, halo (aK.z = type)
   var ECL_R = portrait ? 3.6 * S : 4.4;
-  // 6 eclipse: rotating white-hot ring, gold corona filaments, concentric waves pulsing outward, faint halo (aK.z = type)
-  (function () { var b = bufs[6], r = rng(71), R0 = ECL_R, F = 160;
+  (function () { var b = bufs[7], r = rng(71), R0 = ECL_R, F = 160;
     for (var i = 0; i < N; i++) { var q = r();
-      if (q < .3) { put(b, i, (i * 2.39996323) % 6.2831853, R0 * (1 + gauss(r) * .004), 0); aK[i*3+2] = 0; }
+      if (q < .3) { put(b, i, (i * 2.39996323) % 6.2831853, R0, 0); aK[i*4+2] = 0; }
       else if (q < .56) { var k = (r() * F) | 0, h = Math.sin(k * 12.9898) * 43758.5453; h = h - Math.floor(h);
-        put(b, i, k / F * 6.2831853 + gauss(r) * .006, r(), (2.5 + h * 7.5)); aK[i*3+2] = 1; }
-      else if (q < .9) { put(b, i, r() * 6.2831853, ((r() * 4) | 0) / 4 + gauss(r) * .0015, 0); aK[i*3+2] = 3; }
-      else { put(b, i, r() * 6.2831853, R0 + Math.abs(gauss(r)) * 3.2 * S, 0); aK[i*3+2] = 2; } } })();
+        put(b, i, k / F * 6.2831853 + gauss(r) * .006, r(), (2.5 + h * 7.5)); aK[i*4+2] = 1; }
+      else if (q < .9) { put(b, i, r() * 6.2831853, ((r() * 4) | 0) / 4 + gauss(r) * .0015, 0); aK[i*4+2] = 3; }
+      else { put(b, i, r() * 6.2831853, R0 + Math.abs(gauss(r)) * 3.2 * S, 0); aK[i*4+2] = 2; } } })();
 
   /* ---------- material ---------- */
   var MAXI = 8;
@@ -831,67 +963,95 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     uTime: { value: 0 }, uProg: { value: 0 }, uSize: { value: 2.4 }, uDim: { value: 1 }, uComp: { value: .6 },
     uMouse: { value: new THREE.Vector2(9, 9) }, uAspect: { value: 1 }, uHover: { value: 0 }, uS: { value: S },
     uImp: { value: imps }, uAmp: { value: amps },
-    uHi: { value: 0 }, uR0: { value: ECL_R }
+    uHi: { value: 0 }, uR0: { value: ECL_R }, uProj: { value: 0 }, uStep: { value: 0 },
+    uQ: { value: new THREE.Vector3(QPOS[0], QPOS[1], QPOS[2]) }, uIntro: { value: 2 }, uFocus: { value: 13 },
+    uTop: { value: TOP.map(function (c) { return new THREE.Vector3(c[0], c[1], c[2]); }) }
   };
 
   var VS = [
-    'uniform float uTime, uProg, uSize, uDim, uComp, uAspect, uHover, uS, uHi, uR0;',
-    'uniform vec2 uMouse;',
+    'uniform float uTime, uProg, uSize, uDim, uComp, uAspect, uHover, uS, uHi, uR0, uProj, uStep, uIntro, uFocus;',
+    'uniform vec2 uMouse; uniform vec3 uQ; uniform vec3 uTop[5];',
     'uniform vec4 uImp[' + MAXI + '];',
     'uniform float uAmp[' + MAXI + '];',
-    'attribute vec3 p1, p2, p3, p4, p5, p6;',
-    'attribute vec4 aR; attribute vec3 aK;',
-    'varying vec3 vCol; varying float vA;',
+    'attribute vec3 p1, p2, p3, p4, p5, p6, p7;',
+    'attribute vec4 aR, aK, aI;',
+    'varying vec3 vCol; varying float vA; varying float vBlur;',
     'vec3 rotX(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(p.x, c*p.y-s*p.z, s*p.y+c*p.z); }',
     'vec3 rotY(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(c*p.x+s*p.z, p.y, -s*p.x+c*p.z); }',
     'vec3 rotZ(vec3 p, float a){ float c=cos(a), s=sin(a); return vec3(c*p.x-s*p.y, s*p.x+c*p.y, p.z); }',
-    'vec3 rotAxis(vec3 p, vec3 k, float a){ float c=cos(a), s=sin(a); return p*c+cross(k,p)*s+k*dot(k,p)*(1.0-c); }',
     'vec3 roadC(float s){ return vec3(sin(s*0.075)*7.0*uS+sin(s*0.021)*3.0*uS, -2.4, 8.0-s); }',
     'vec3 roadLat(float s){ float d=0.075*7.0*uS*cos(s*0.075)+0.021*3.0*uS*cos(s*0.021); return normalize(vec3(1.0,0.0,d)); }',
     'vec3 knot(float u){ return vec3((2.0+cos(3.0*u))*cos(2.0*u), sin(3.0*u)*1.2, (2.0+cos(3.0*u))*sin(2.0*u))*2.45*uS; }',
-    // white -> champagne -> gold -> amber
     'vec3 ramp(float h){ vec3 W=vec3(1.0,0.97,0.93), C=vec3(1.0,0.86,0.62), G=vec3(0.98,0.70,0.33), A=vec3(0.90,0.46,0.16);',
     '  return h<0.4 ? mix(W,C,h/0.4) : (h<0.75 ? mix(C,G,(h-0.4)/0.35) : mix(G,A,(h-0.75)/0.25)); }',
+    'float sm(float a, float b, float x){ return smoothstep(a,b,x); }',
     'vec3 form(float k, float t, out float h, out float fa){',
     '  fa=1.0;',
-    '  if(k<0.5){',   // exact sphere; gold spiral bands sweep across it
+    '  if(k<0.5){',   // sphere with gold spiral bands
     '    vec3 n=normalize(position); float lat=asin(clamp(n.y,-1.0,1.0)); float lon=atan(n.z,n.x);',
-    '    float band=0.5+0.5*sin(lat*4.0+lon*2.0-t*0.9); h=smoothstep(0.6,1.0,band)*0.95+step(0.94,aR.z)*0.5;',
+    '    float band=0.5+0.5*sin(lat*4.0+lon*2.0-t*0.9); h=sm(0.6,1.0,band)*0.95+step(0.94,aR.z)*0.5;',
     '    vec3 p=rotY(position,t*0.285); return rotZ(rotX(p,0.38),-0.12); }',
-    '  if(k<1.5){ float u=fract(p1.x+t*0.018*(0.8+aR.y*0.4))*6.2831853;',
+    '  if(k<1.5){ float u=fract(p1.x+t*0.018*(0.8+aR.y*0.4))*6.2831853;',   // trefoil knot
     '    vec3 c=knot(u); vec3 T=normalize(knot(u+0.01)-c); vec3 Nn=normalize(cross(T,vec3(0.0,1.0,0.0))); vec3 B=cross(T,Nn);',
     '    float rad=p1.z*uS*(1.0+0.12*sin(u*9.0-t*2.0)); vec3 p=c+(Nn*cos(p1.y)+B*sin(p1.y))*rad;',
     '    h=0.22+pow(0.5+0.5*sin(u*3.0-t*1.4),6.0)*0.75+step(0.6,p1.z)*0.15; fa=p1.z>0.42?0.7:1.0;',
     '    p=rotY(p,t*0.12); return rotZ(rotX(p,0.42),0.1); }',
-    '  if(k<2.5){ vec3 p=p2; float r=length(p.xz); h=1.0-smoothstep(7.0*uS,13.5*uS,r); p=rotY(p,t*(0.9/(1.0+r*0.25))); return rotZ(rotX(p,0.5),0.18); }',
-    '  if(k<3.5){ float id=aK.x; vec3 p=p3; float r=length(p.xz)/uS;',
+    '  if(k<2.5){ vec3 p=p2; float id=aR.w; float r=id>0.5 ? 10.0*uS : length(p.xz);',   // orbit + project bodies
+    '    h=1.0-sm(7.0*uS,13.5*uS,r);',
+    '    if(id>0.5){ float on=1.0-step(0.5,abs(id-uProj)); h=mix(0.5,1.0,on); fa=mix(1.7,3.4,on)*(1.0+0.18*sin(t*2.2+id)); p.y+=on*sin(t*3.0+aR.x*6.28)*0.12*uS; }',
+    '    p=rotY(p,t*(0.9/(1.0+r*0.25))); return rotZ(rotX(p,0.5),0.18); }',
+    '  if(k<3.5){ float id=aK.x; vec3 p=p3; float r=length(p.xz)/uS;',   // galaxy
     '    if(id<13.5){ float on=1.0-step(0.5,abs(id-uHi)); h=mix(0.15,1.0,on); fa=mix(1.2,2.4,on); }',
     '    else { h=r<1.8 ? 0.05 : clamp(0.25+r*0.065,0.0,0.92); fa=r<1.8 ? 1.3 : 1.05; }',
     '    p=rotY(p,t*0.1); return rotZ(p,0.18); }',
-    '  if(k<4.5){ float s=p4.x; float ring=step(0.5,aK.y);',
+    '  if(k<4.5){ float role=aK.w; vec3 p=p4; float st=uStep;',   // query: vector space
+    '    float qin=sm(0.0,0.85,st), ret=sm(0.9,1.6,st), rr=sm(1.9,2.7,st), gen=sm(2.9,3.7,st);',
+    '    vec3 drift=vec3(sin(t*0.4+aR.x*6.28),cos(t*0.35+aR.y*6.28),sin(t*0.3+aR.z*6.28))*0.06*uS;',
+    '    if(role<0.3){ h=0.08; fa=0.55*mix(1.0,0.5,gen); p+=drift*2.0; }',
+    '    else if(role<0.8){ h=0.15; fa=1.05*mix(1.0,0.45,ret*0.6+gen*0.4); p+=drift; }',
+    '    else if(role<1.5){ h=mix(0.15,0.82,ret); fa=mix(1.05,2.1,ret)*mix(1.0,0.6,rr); p+=drift; }',
+    '    else if(role<2.5){ int rk=int(floor((role-2.0)*10.0+0.5)); vec3 c0=uTop[0];',
+    '      if(rk==1) c0=uTop[1]; else if(rk==2) c0=uTop[2]; else if(rk==3) c0=uTop[3]; else if(rk==4) c0=uTop[4];',
+    '      vec3 slot=uQ+vec3(4.2*uS,(2.6-float(rk)*1.3)*uS,-0.5*uS);',
+    '      vec3 home=mix(c0,slot,rr); p=home+p4*mix(1.0,0.75,rr);',
+    '      h=mix(0.15,1.0,ret); fa=mix(1.05,2.9,ret)*(1.0+gen*0.5*(0.5+0.5*sin(t*5.0-float(rk))));',
+    '      if(gen>0.0&&aR.y>0.55){ float u=fract(aR.x+t*0.45); p=mix(p,mix(home,uQ,u),gen); fa*=1.0+gen*0.4; } }',
+    '    else if(role<3.5){ float u=fract(aR.x+t*0.3); p=mix(uQ,p4,u)+drift*0.5; h=0.9; fa=ret*(1.0-rr*0.8)*1.6*(0.35+0.65*(1.0-u)); }',
+    '    else { p=uQ+p4*(1.0+gen*0.6)+vec3(-26.0*uS*(1.0-qin),0.0,0.0); h=0.03+gen*0.55; fa=2.8; }',
+    '    return p; }',
+    '  if(k<5.5){ float s=p5.x; float ring=step(0.5,aK.y);',   // stream
     '    if(ring<0.5) s=mod(s+t*3.2,84.0);',
     '    float w=(1.9+0.7*sin(s*0.13+1.0))*uS;',
-    '    vec2 o=ring>0.5 ? vec2(p4.y,p4.z)*uS : vec2(p4.y*w,p4.z*0.5*uS);',
+    '    vec2 o=ring>0.5 ? vec2(p5.y,p5.z)*uS : vec2(p5.y*w,p5.z*0.5*uS);',
     '    if(ring<0.5){ float tw=s*0.09+t*0.25; float cs=cos(tw), sn=sin(tw); o=vec2(o.x*cs-o.y*sn,o.x*sn+o.y*cs); }',
-    '    h=ring>0.5 ? 0.92 : 1.0-smoothstep(0.0,1.5,abs(p4.y)); fa=ring>0.5 ? 0.85 : 1.0;',
+    '    h=ring>0.5 ? 0.92 : 1.0-sm(0.0,1.5,abs(p5.y)); fa=ring>0.5 ? 0.85 : 1.0;',
     '    return roadC(s)+roadLat(s)*o.x+vec3(0.0,o.y,0.0); }',
-    '  if(k<5.5){ vec3 p=p5; float y=sin(p.x*0.22+t*0.5)*0.9+cos(p.z*0.25+t*0.4)*0.8+sin((p.x+p.z)*0.12+t*0.3)*0.5;',
-    '    h=smoothstep(0.6,1.9,y+0.3); p.y=-4.5+y; return p; }',
-    '  float ty=aK.z; float th=p6.x; float r; float R0=uR0;',   // eclipse
-    '  if(ty<0.5){ th+=t*0.35; r=R0; h=0.06+0.3*pow(0.5+0.5*sin(p6.x*3.0),10.0); fa=1.9+0.4*pow(0.5+0.5*sin(p6.x*3.0),8.0); }',
-    '  else if(ty<1.5){ th+=t*0.04; float u=fract(p6.y+t*0.06*(0.6+aR.y)); r=R0+0.2*uS+u*p6.z*uS; h=0.5+u*0.5; fa=pow(1.0-u,1.3)*1.7; }',
-    '  else if(ty<2.5){ th+=t*0.05; r=p6.y; h=0.62; fa=0.45; }',
-    '  else { th+=t*0.08; float u=fract(p6.y+t*0.07); r=R0+0.35+u*9.5*uS; h=0.55+u*0.4; fa=pow(1.0-u,1.6)*1.5*smoothstep(0.0,0.08,u); }',
+    '  if(k<6.5){ vec3 p=p6; float y=sin(p.x*0.22+t*0.5)*0.9+cos(p.z*0.25+t*0.4)*0.8+sin((p.x+p.z)*0.12+t*0.3)*0.5;',   // terrain
+    '    h=sm(0.6,1.9,y+0.3); p.y=-4.5+y; return p; }',
+    '  float ty=aK.z; float th=p7.x; float r; float R0=uR0;',   // eclipse
+    '  if(ty<0.5){ th+=t*0.35; r=R0; h=0.06+0.3*pow(0.5+0.5*sin(p7.x*3.0),10.0); fa=1.9+0.4*pow(0.5+0.5*sin(p7.x*3.0),8.0); }',
+    '  else if(ty<1.5){ th+=t*0.04; float u=fract(p7.y+t*0.06*(0.6+aR.y)); r=R0+0.2*uS+u*p7.z*uS; h=0.5+u*0.5; fa=pow(1.0-u,1.3)*1.7; }',
+    '  else if(ty<2.5){ th+=t*0.05; r=p7.y; h=0.62; fa=0.45; }',
+    '  else { th+=t*0.08; float u=fract(p7.y+t*0.07); r=R0+0.35+u*9.5*uS; h=0.55+u*0.4; fa=pow(1.0-u,1.6)*1.5*sm(0.0,0.08,u); }',
     '  return vec3(cos(th)*r, sin(th)*r+0.6, (ty<0.5||ty>2.5) ? 0.0 : (aR.z-0.5)*0.35);',
     '}',
     'void main(){',
     '  float t=uTime; float k=floor(uProg); float f=uProg-k;',
     '  float ff=clamp((f-aR.x*0.35)/0.65,0.0,1.0); ff=ff*ff*(3.0-2.0*ff);',
     '  float h, fa; vec3 pos=form(k,t,h,fa); float arc=0.0;',
-    '  if(f>0.0005){ float h2, fa2; vec3 b=form(min(k+1.0,6.0),t,h2,fa2); arc=sin(ff*3.14159); pos=mix(pos,b,ff); h=mix(h,h2,ff); fa=mix(fa,fa2,ff);',
+    '  if(f>0.0005){ float h2, fa2; vec3 b=form(min(k+1.0,' + LAST + '.0),t,h2,fa2); arc=sin(ff*3.14159); pos=mix(pos,b,ff); h=mix(h,h2,ff); fa=mix(fa,fa2,ff);',
     '    vec3 q=pos*0.16/uS;',
     '    vec3 flow=vec3(sin(q.y*1.7+t*0.45)+0.5*sin(q.z*3.1-t*0.3), sin(q.z*1.5+t*0.4)+0.5*sin(q.x*2.7+t*0.35), sin(q.x*1.9-t*0.5)+0.5*sin(q.y*2.3+t*0.3));',
     '    pos+=flow*arc*3.6*uS; pos=rotY(pos, arc*0.9); pos.y+=sin(length(pos.xz)*0.35-t*1.2)*arc*1.2*uS; }',
+    // intro: scattered light gathers into the name, then flows into the scene
+    '  if(uIntro<1.999){',
+    '    vec3 sc=normalize(vec3(aR.x-0.5,aR.y-0.5,aR.z-0.5)+0.001)*(30.0+aR.x*25.0);',
+    '    float a1=clamp((uIntro-aR.y*0.4)/0.6,0.0,1.0); a1=a1*a1*(3.0-2.0*a1);',
+    '    vec3 ip=mix(sc,aI.xyz,a1);',
+    '    float a2=clamp((uIntro-1.0-aR.x*0.45)/0.55,0.0,1.0); a2=a2*a2*(3.0-2.0*a2);',
+    '    float ai=sin(a2*3.14159)+sin(a1*3.14159)*0.6;',
+    '    pos=mix(ip,pos,a2)+vec3(sin(aR.y*30.0+t),cos(aR.z*30.0+t),sin(aR.x*20.0))*ai*1.2*uS;',
+    '    h=mix(aI.w,h,a2); fa=mix(1.35,fa,a2); arc=max(arc,ai*0.5); }',
     '  float glow=0.0;',
     '  for(int i=0;i<' + MAXI + ';i++){ float age=t-uImp[i].w; if(age>0.0&&age<2.6){',
     '    vec3 d=pos-uImp[i].xyz; float dist=length(d); float front=age*12.0;',
@@ -904,57 +1064,95 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     '  mv.xy+=(dd/max(dl,0.0001))*push*1.0*(-mv.z/26.0); glow+=push*0.6;',
     '  gl_Position=projectionMatrix*mv;',
     '  float depth=-mv.z;',
-    '  gl_PointSize=clamp(uSize*(0.55+aR.y*0.9)*(26.0/depth)*(1.0+glow*0.5),1.0,18.0);',
+    // depth of field: particles close to the camera open into soft gold bokeh
+    '  float blur=clamp((uFocus-depth)/(uFocus*0.75),0.0,1.0); blur*=blur;',
+    '  float size=uSize*(0.55+aR.y*0.9)*(26.0/depth)*(1.0+glow*0.5)*(1.0+blur*2.4);',
+    '  gl_PointSize=clamp(size,1.0,18.0+blur*24.0);',
     '  float tw=0.72+0.28*sin(t*(0.7+aR.z*2.0)+aR.x*40.0);',
     '  float df=smoothstep(70.0,18.0,depth);',
-    '  vA=tw*uDim*fa*mix(0.25,1.0,df)*uComp*(1.0+glow*0.8+arc*0.4);',
-    '  vCol=ramp(clamp(h+arc*0.45+glow*0.4,0.0,1.0));',
+    '  vA=tw*uDim*fa*mix(0.25,1.0,df)*uComp*(1.0+glow*0.8+arc*0.4)/(1.0+blur*3.0);',
+    '  vBlur=blur;',
+    '  vCol=ramp(clamp(h+arc*0.45+glow*0.4+blur*0.35,0.0,1.0));',
     '}'
   ].join('\n');
   var FS = [
-    'varying vec3 vCol; varying float vA;',
+    'varying vec3 vCol; varying float vA; varying float vBlur;',
     'void main(){ vec2 c=gl_PointCoord-0.5; float d=length(c); if(d>0.5) discard;',
-    '  float a=smoothstep(0.5,0.0,d); vec3 col=mix(vCol,vec3(1.0,0.98,0.95),pow(a,6.0)*0.4);',
-    '  gl_FragColor=vec4(col, a*a*vA); }'
+    '  float sharp=smoothstep(0.5,0.0,d); sharp*=sharp;',
+    '  float disc=smoothstep(0.5,0.34,d)*0.6;',
+    '  float a=mix(sharp,disc,vBlur);',
+    '  vec3 col=mix(vCol,vec3(1.0,0.98,0.95),pow(smoothstep(0.5,0.0,d),6.0)*0.4*(1.0-vBlur));',
+    '  gl_FragColor=vec4(col, a*vA); }'
   ].join('\n');
 
-  var scene, camera, points, geometry, rt, fadeScene, blitScene, orthoCam, fadeMat, blitMat;
+  var scene, camera, points, geometry, rt, bloomA, bloomB, fadeScene, blitScene, quadScene, quad, orthoCam, fadeMat, blitMat, brightMat, blurMat;
+  var quadVS = 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }';
   if (renderer) {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera(40, 1, 0.1, 300);
     geometry = new THREE.BufferGeometry();
     geometry.setAttribute('position', new THREE.BufferAttribute(bufs[0], 3));
-    for (var a = 1; a < 7; a++) geometry.setAttribute('p' + a, new THREE.BufferAttribute(bufs[a], 3));
+    for (var a = 1; a <= LAST; a++) geometry.setAttribute('p' + a, new THREE.BufferAttribute(bufs[a], 3));
     geometry.setAttribute('aR', new THREE.BufferAttribute(aR, 4));
-    geometry.setAttribute('aK', new THREE.BufferAttribute(aK, 3));
+    geometry.setAttribute('aK', new THREE.BufferAttribute(aK, 4));
+    geometry.setAttribute('aI', new THREE.BufferAttribute(aI, 4));
     points = new THREE.Points(geometry, new THREE.ShaderMaterial({ uniforms: uniforms, vertexShader: VS, fragmentShader: FS, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending }));
     points.frustumCulled = false;
     scene.add(points);
 
     orthoCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
-    var quadVS = 'varying vec2 vUv; void main(){ vUv=uv; gl_Position=vec4(position.xy,0.0,1.0); }';
     fadeMat = new THREE.ShaderMaterial({ uniforms: { uBg: { value: new THREE.Vector3(BG.r, BG.g, BG.b) }, uFade: { value: .3 } }, vertexShader: quadVS,
       fragmentShader: 'uniform vec3 uBg; uniform float uFade; void main(){ gl_FragColor=vec4(uBg,uFade); }', transparent: true, depthTest: false, depthWrite: false });
     fadeScene = new THREE.Scene(); fadeScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), fadeMat));
-    blitMat = new THREE.ShaderMaterial({ uniforms: { uTex: { value: null }, uRes: { value: new THREE.Vector2(1, 1) }, uTime: { value: 0 } }, vertexShader: quadVS,
+
+    // bloom: bright-pass at quarter resolution, two separable gaussian iterations
+    brightMat = new THREE.ShaderMaterial({ uniforms: { uTex: { value: null }, uTexel: { value: new THREE.Vector2() } }, vertexShader: quadVS, depthTest: false, depthWrite: false,
       fragmentShader: [
-        'uniform sampler2D uTex; uniform vec2 uRes; uniform float uTime; varying vec2 vUv;',
-        'float h(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }',
+        'uniform sampler2D uTex; uniform vec2 uTexel; varying vec2 vUv;',
+        'void main(){ vec3 c=texture2D(uTex,vUv+uTexel*vec2(-1.0,-1.0)).rgb+texture2D(uTex,vUv+uTexel*vec2(1.0,-1.0)).rgb',
+        '  +texture2D(uTex,vUv+uTexel*vec2(-1.0,1.0)).rgb+texture2D(uTex,vUv+uTexel*vec2(1.0,1.0)).rgb; c*=0.25;',
+        '  float l=max(c.r,max(c.g,c.b)); c*=smoothstep(0.16,0.65,l); gl_FragColor=vec4(c,1.0); }'].join('\n') });
+    blurMat = new THREE.ShaderMaterial({ uniforms: { uTex: { value: null }, uDir: { value: new THREE.Vector2() } }, vertexShader: quadVS, depthTest: false, depthWrite: false,
+      fragmentShader: [
+        'uniform sampler2D uTex; uniform vec2 uDir; varying vec2 vUv;',
+        'void main(){ vec3 c=texture2D(uTex,vUv).rgb*0.227027;',
+        '  c+=(texture2D(uTex,vUv+uDir).rgb+texture2D(uTex,vUv-uDir).rgb)*0.1945946;',
+        '  c+=(texture2D(uTex,vUv+uDir*2.0).rgb+texture2D(uTex,vUv-uDir*2.0).rgb)*0.1216216;',
+        '  c+=(texture2D(uTex,vUv+uDir*3.0).rgb+texture2D(uTex,vUv-uDir*3.0).rgb)*0.054054;',
+        '  c+=(texture2D(uTex,vUv+uDir*4.0).rgb+texture2D(uTex,vUv-uDir*4.0).rgb)*0.016216;',
+        '  gl_FragColor=vec4(c,1.0); }'].join('\n') });
+    quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), brightMat);
+    quadScene = new THREE.Scene(); quadScene.add(quad);
+
+    blitMat = new THREE.ShaderMaterial({ uniforms: { uTex: { value: null }, uBloom: { value: null }, uRes: { value: new THREE.Vector2(1, 1) }, uTime: { value: 0 }, uBloomStr: { value: .95 } }, vertexShader: quadVS,
+      fragmentShader: [
+        'uniform sampler2D uTex; uniform sampler2D uBloom; uniform vec2 uRes; uniform float uTime; uniform float uBloomStr; varying vec2 vUv;',
+        'float hs(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }',
         'void main(){ vec3 c=texture2D(uTex,vUv).rgb;',
+        '  c+=texture2D(uBloom,vUv).rgb*uBloomStr*vec3(1.0,0.95,0.86);',
         '  vec2 q=vUv-0.5; q.x*=uRes.x/uRes.y; float v=smoothstep(1.15,0.25,length(q)); c*=mix(0.6,1.0,v);',
-        '  c+=(h(vUv*uRes+fract(uTime)*91.7)-0.5)*0.028;',
+        '  c+=(hs(vUv*uRes+fract(uTime)*91.7)-0.5)*0.028;',
         '  gl_FragColor=vec4(c,1.0); }'].join('\n'), depthTest: false, depthWrite: false });
     blitScene = new THREE.Scene(); blitScene.add(new THREE.Mesh(new THREE.PlaneGeometry(2, 2), blitMat));
   }
 
   function makeRT() {
     var w = Math.floor(window.innerWidth * DPR), h = Math.floor(window.innerHeight * DPR);
-    if (rt) rt.dispose();
+    [rt, bloomA, bloomB].forEach(function (t) { if (t) t.dispose(); });
     var half = renderer.capabilities.isWebGL2 || renderer.extensions.get('OES_texture_half_float');
-    rt = new THREE.WebGLRenderTarget(w, h, { type: half ? THREE.HalfFloatType : THREE.UnsignedByteType, depthBuffer: false, stencilBuffer: false });
+    var opts = { type: half ? THREE.HalfFloatType : THREE.UnsignedByteType, depthBuffer: false, stencilBuffer: false };
+    rt = new THREE.WebGLRenderTarget(w, h, opts);
+    var bw = Math.max(1, w >> 2), bh = Math.max(1, h >> 2);
+    bloomA = new THREE.WebGLRenderTarget(bw, bh, opts); bloomB = new THREE.WebGLRenderTarget(bw, bh, opts);
     renderer.setRenderTarget(rt); renderer.setClearColor(BG, 1); renderer.clear(); renderer.setRenderTarget(null);
+    brightMat.uniforms.uTexel.value.set(1 / w * 2, 1 / h * 2);
     blitMat.uniforms.uTex.value = rt.texture;
+    blitMat.uniforms.uBloom.value = bloomA.texture;
     blitMat.uniforms.uRes.value.set(w, h);
+  }
+  function blurPass(src, dst, dx, dy) {
+    quad.material = blurMat; blurMat.uniforms.uTex.value = src.texture; blurMat.uniforms.uDir.value.set(dx, dy);
+    renderer.setRenderTarget(dst); renderer.render(quadScene, orthoCam);
   }
   function resize() {
     if (!renderer) return;
@@ -975,16 +1173,15 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
       case 1: a = -0.7 + lp * 1.4; return [V(Math.sin(a) * 27, 3 - lp * 4, Math.cos(a) * 27), V(mobile ? 0 : -6.5 + lp * 13, mobile ? 4 : 0, 0)];
       case 2: return [V(0, (12 - lp * 7) * pull, 25 * pull), V(0, -1, 0)];
       case 3: a = -0.35 + lp * 0.7; return [V(Math.sin(a) * 19 * pull, (25 - lp * 3) * pull, Math.cos(a) * 19 * pull), V(narrow ? 0 : 6.0, narrow ? -1.0 : -2.0, narrow ? 0 : 1.5)];
-      case 4: s = -6 + lp * 61; c = roadC(s); var tg = roadC(s + 11); return [V(c[0], c[1] + 3.3, c[2]), V(tg[0], tg[1] + .9, tg[2])];
-      case 5: return [V(0, 1.5 + lp * 2.5, 15 - lp * 8), V(0, -3.5, -22)];
+      case 4: a = -0.3 + lp * 0.6; return [V(Math.sin(a) * 20 * pull + 1.5, (2.5 + lp * 1.5) * pull, Math.cos(a) * 20 * pull), V(narrow ? 2.5 : -2.4, narrow ? 2.5 : 0.4, 0)];
+      case 5: s = -6 + lp * 61; c = roadC(s); var tg = roadC(s + 11); return [V(c[0], c[1] + 3.3, c[2]), V(tg[0], tg[1] + .9, tg[2])];
+      case 6: return [V(0, 1.5 + lp * 2.5, 15 - lp * 8), V(0, -3.5, -22)];
       default: return [V(0, 0.6, (24 - lp * 1.5) * pull), V(0, 0.6, 0)];
     }
   }
 
   /* ---------- scroll → progress ---------- */
-  var sceneLP = [0, 0, 0, 0, 0, 0, 0];
-  // Each section holds its shape while the viewport centre is inside it (the camera keeps moving),
-  // and the swarm flows to the next shape across the gap between sections (about one screen).
+  var sceneLP = []; for (var q0 = 0; q0 <= LAST; q0++) sceneLP.push(0);
   function measure() {
     var vh = window.innerHeight, c = vh * 0.5, R = [], i;
     for (i = 0; i < sections.length; i++) {
@@ -997,9 +1194,9 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     for (i = 0; i < R.length; i++) {
       if (c <= R[i][1]) {
         if (i === 0 || c >= R[i][0]) return R[i][2];
-        var f = (c - R[i-1][1]) / Math.max(1, R[i][0] - R[i-1][1]);
-        f = f * .3 + f * f * (3 - 2 * f) * .7;
-        return R[i-1][2] + (R[i][2] - R[i-1][2]) * f;
+        var fr = (c - R[i-1][1]) / Math.max(1, R[i][0] - R[i-1][1]);
+        fr = fr * .3 + fr * fr * (3 - 2 * fr) * .7;
+        return R[i-1][2] + (R[i][2] - R[i-1][2]) * fr;
       }
     }
     return R[R.length - 1][2];
@@ -1032,7 +1229,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   var tmpV = new THREE.Vector3();
   function placeLabels(prog) {
     if (!renderer) return;
-    var w3 = Math.max(0, 1 - Math.abs(prog - 3) * 1.8), w4 = Math.max(0, 1 - Math.abs(prog - 4) * 1.8);
+    var w3 = Math.max(0, 1 - Math.abs(prog - SC.galaxy) * 1.8), w5 = Math.max(0, 1 - Math.abs(prog - SC.stream) * 1.8);
     var W2 = window.innerWidth / 2, H2 = window.innerHeight / 2;
     skLabels.forEach(function (el, i) {
       if (w3 < .02 || mobile) { el.style.opacity = 0; el.style.transform = 'translate3d(-9999px,0,0)'; el.tabIndex = -1; return; }
@@ -1045,32 +1242,31 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
       el.style.transform = 'translate3d(' + (tmpV.x * W2 + W2).toFixed(1) + 'px,' + (-tmpV.y * H2 + H2).toFixed(1) + 'px,0) translate(-50%,-120%)';
     });
     yrLabels.forEach(function (el, i) {
-      if (w4 < .02) { el.style.opacity = 0; el.style.transform = 'translate3d(-9999px,0,0)'; return; }
+      if (w5 < .02) { el.style.opacity = 0; el.style.transform = 'translate3d(-9999px,0,0)'; return; }
       var c = roadC(MILESTONES[i][1]); tmpV.set(c[0], c[1] + 3.7 * S + .8, c[2]);
       var dist = tmpV.distanceTo(camera.position); tmpV.project(camera);
       if (tmpV.z > 1 || tmpV.z < -1) { el.style.opacity = 0; return; }
       var sy = -tmpV.y * H2 + H2;
-      el.style.opacity = w4 * Math.min(1, Math.max(0, (46 - dist) / 14)) * Math.min(1, Math.max(0, (dist - 3) / 4)) * Math.min(1, Math.max(0, (sy - 90) / 40));
+      el.style.opacity = w5 * Math.min(1, Math.max(0, (46 - dist) / 14)) * Math.min(1, Math.max(0, (dist - 3) / 4)) * Math.min(1, Math.max(0, (sy - 90) / 40));
       el.style.transform = 'translate3d(' + (tmpV.x * W2 + W2).toFixed(1) + 'px,' + (-tmpV.y * H2 + H2).toFixed(1) + 'px,0) translate(-50%,-120%)';
     });
   }
 
-  /* ---------- journey cards ride the road ---------- */
+  /* ---------- journey cards ride the stream ---------- */
   var mCards = $$('.milestone');
-  if (!renderer) root.classList.add('no-gl');
   var jHead = $('.journey__head');
   function placeCards(prog) {
     if (!renderer) return;
-    jHead.style.opacity = Math.max(0, 1 - sceneLP[4] * 9).toFixed(3);
-    var w4 = Math.max(0, 1 - Math.abs(prog - 4) * 1.6), W2 = window.innerWidth / 2, H2 = window.innerHeight / 2;
+    jHead.style.opacity = Math.max(0, 1 - sceneLP[SC.stream] * 9).toFixed(3);
+    var w5 = Math.max(0, 1 - Math.abs(prog - SC.stream) * 1.6), W2 = window.innerWidth / 2, H2 = window.innerHeight / 2;
     mCards.forEach(function (el, i) {
-      if (w4 < .02) { el.style.opacity = 0; el.style.visibility = 'hidden'; return; }
+      if (w5 < .02) { el.style.opacity = 0; el.style.visibility = 'hidden'; return; }
       var sN = MILESTONES[i][1], c = roadC(sN), l = roadLat(sN), side = i % 2 ? 1 : -1, off = (mobile ? 2.4 : 6.2) * S;
       tmpV.set(c[0] + l[0] * off * side, c[1] + 2.6, c[2] + l[2] * off * side);
       var dist = tmpV.distanceTo(camera.position); tmpV.project(camera);
       if (tmpV.z > 1 || dist < 2.5) { el.style.opacity = 0; el.style.visibility = 'hidden'; return; }
       var sc = Math.min(1.15, Math.max(.32, 15 / dist));
-      var op = w4 * Math.min(1, Math.max(0, (40 - dist) / 11)) * Math.min(1, Math.max(0, (dist - 3) / 5)) * Math.min(1, Math.max(0, (sceneLP[4] - .03) / .06));
+      var op = w5 * Math.min(1, Math.max(0, (40 - dist) / 11)) * Math.min(1, Math.max(0, (dist - 3) / 5)) * Math.min(1, Math.max(0, (sceneLP[SC.stream] - .03) / .06));
       el.style.visibility = op > .01 ? 'visible' : 'hidden';
       el.style.opacity = op;
       el.style.zIndex = String(100 - Math.round(dist));
@@ -1080,12 +1276,42 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     });
   }
 
+  /* ---------- query scene: steps, sources, typed answer ---------- */
+  var ragEl = $('#s-rag'), ragSteps = $$('.rag__steps li'), ansEl = $('#rag-answer'), lastChars = -1, lastStepIdx = -1;
+  function updateRag(prog) {
+    var st = Math.min(4, Math.max(0, sceneLP[SC.query] * 4.4));
+    uniforms.uStep.value = st;
+    var idx = st < 1 ? 0 : st < 2 ? 1 : st < 3 ? 2 : 3;
+    if (idx !== lastStepIdx) {
+      lastStepIdx = idx;
+      ragSteps.forEach(function (li, j) { li.classList.toggle('on', j === idx); li.classList.toggle('done', j < idx); });
+      ragEl.dataset.stage = idx;
+    }
+    var chars = Math.round(Math.max(0, Math.min(1, (st - 3) / .85)) * ANSWER.length);
+    if (chars !== lastChars) { lastChars = chars; ansEl.textContent = ANSWER.slice(0, chars); ansEl.classList.toggle('typing', chars > 0 && chars < ANSWER.length); }
+  }
+
+  /* ---------- project bodies on the orbit ---------- */
+  var workEl = $('#s-work'), projCards = $$('.cards .card'), hoverProj = 0, focusProj = 0, lastFocus = 1, focusAmt = 0, bodyV = new THREE.Vector3();
+  function setFocus(j) {
+    focusProj = j; if (j) lastFocus = j;
+    projCards.forEach(function (c, q) { c.classList.toggle('is-focus', focusProj === q + 1); c.setAttribute('aria-pressed', String(focusProj === q + 1)); });
+  }
+  projCards.forEach(function (el, j) {
+    el.setAttribute('role', 'button'); el.tabIndex = 0; el.setAttribute('aria-pressed', 'false');
+    el.addEventListener('pointerenter', function () { hoverProj = j + 1; });
+    el.addEventListener('pointerleave', function () { hoverProj = 0; });
+    el.addEventListener('click', function () { setFocus(focusProj === j + 1 ? 0 : j + 1); });
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); } });
+  });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && focusProj) setFocus(0); });
+
   /* ---------- pointer: hover + ripples ---------- */
   var mouse = new THREE.Vector2(9, 9), mouseOn = 0, active = false;
   var ray = new THREE.Raycaster(), plane = new THREE.Plane(), hit = new THREE.Vector3(), lastImp = new THREE.Vector3(999, 0, 0), lastImpT = -1, impIdx = 0;
   var camTarget = new THREE.Vector3();
   function addImpulse(amp) {
-    if (!renderer || reduce) return;
+    if (!renderer || reduce || introOn) return;
     ray.setFromCamera(mouse, camera);
     var dir = new THREE.Vector3(); camera.getWorldDirection(dir);
     plane.setFromNormalAndCoplanarPoint(dir, camTarget);
@@ -1105,7 +1331,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     if (ray.ray.intersectPlane(plane, hit) && (hit.distanceTo(lastImp) > 2.2 || uniforms.uTime.value - lastImpT > 0.35)) addImpulse(1.0);
   }, { passive: true });
   window.addEventListener('pointerdown', function (e) {
-    if (e.target.closest('a,button,input,label')) return;
+    if (e.target.closest('a,button,input,label,.card')) return;
     mouse.set(e.clientX / window.innerWidth * 2 - 1, -(e.clientY / window.innerHeight) * 2 + 1);
     addImpulse(3.4);
   });
@@ -1129,6 +1355,81 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     }, { passive: true });
   } else { cursor.style.display = 'none'; }
 
+  /* ---------- typography: letter reveals, foil, engraved rules ---------- */
+  function splitHeading(h) {
+    h.setAttribute('aria-label', h.textContent.replace(/\s+/g, ' ').trim());
+    var idx = 0;
+    (function walk(node) {
+      Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+        if (n.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach(function (part) {
+            if (!part) return;
+            if (/^\s+$/.test(part)) { frag.appendChild(document.createTextNode(' ')); return; }
+            var w = document.createElement('span'); w.className = 'w'; w.setAttribute('aria-hidden', 'true');
+            Array.from(part).forEach(function (ch) { var c = document.createElement('span'); c.className = 'ch'; c.style.setProperty('--i', idx++); c.textContent = ch; w.appendChild(c); });
+            frag.appendChild(w);
+          });
+          n.parentNode.replaceChild(frag, n);
+        } else if (n.nodeType === 1 && n.tagName !== 'BR' && !n.classList.contains('rule')) {
+          if (n.classList.contains('gold') || n.classList.contains('foil') || n.tagName === 'EM') {
+            var wrap = document.createElement('span'); wrap.className = 'w'; wrap.setAttribute('aria-hidden', 'true');
+            n.parentNode.insertBefore(wrap, n); wrap.appendChild(n);
+            n.classList.add('ch', 'unit'); n.style.setProperty('--i', idx); idx += 3;
+          } else walk(n);
+        }
+      });
+    })(h);
+    h.classList.add('tsplit');
+  }
+  var revealables = $$('[data-reveal]');
+  if (!reduce) revealables.forEach(function (h) { if (h.matches('.display')) splitHeading(h); });
+  var toWatch = revealables.concat($$('.foil:not(.unit), .rule'));
+  if ('IntersectionObserver' in window && !reduce) {
+    var io = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { threshold: .15, rootMargin: '0px 0px -6% 0px' });
+    toWatch.forEach(function (el) { io.observe(el); });
+  } else toWatch.forEach(function (el) { el.classList.add('in'); });
+
+  /* ---------- intro: the name forms out of the swarm ---------- */
+  var introOn = !!renderer && root.classList.contains('intro') && !reduce && window.scrollY < 40;
+  if (!introOn) root.classList.remove('intro');
+  var introReady = false, introT = 0, introStart = 0, nameShown = false;
+  var INTRO_SPEED = 1; try { INTRO_SPEED = +(new URLSearchParams(location.search).get('introSpeed')) || 1; } catch (e) {}
+  function buildIntro() {
+    var spans = $$('.hero__name > span'), cw = Math.ceil(window.innerWidth / 3), chh = Math.ceil(window.innerHeight / 3);
+    var cv = document.createElement('canvas'); cv.width = cw; cv.height = chh;
+    var ctx = cv.getContext('2d', { willReadFrequently: true }), pts = [], heat = [];
+    spans.forEach(function (sp, si) {
+      var rc = sp.getBoundingClientRect(), cs = getComputedStyle(sp), fs = parseFloat(cs.fontSize) / 3;
+      ctx.clearRect(0, 0, cw, chh); ctx.fillStyle = '#fff'; ctx.textBaseline = 'alphabetic';
+      ctx.font = cs.fontWeight + ' ' + fs + 'px ' + cs.fontFamily;
+      var txt = sp.textContent.toUpperCase(), m = ctx.measureText(txt);
+      var fA = m.fontBoundingBoxAscent || fs * .95, fD = m.fontBoundingBoxDescent || fs * .25;
+      var base = rc.top / 3 + (rc.height / 3 - (fA + fD)) / 2 + fA;
+      ctx.fillText(txt, rc.left / 3, base);
+      var d = ctx.getImageData(0, 0, cw, chh).data;
+      for (var y = 0; y < chh; y++) for (var x = 0; x < cw; x++) if (d[(y * cw + x) * 4 + 3] > 128) { pts.push(x * 3, y * 3); heat.push(si === 1 ? .9 : .04); }
+    });
+    if (!pts.length) return false;
+    var hh = Math.tan(camera.fov / 2 * Math.PI / 180) * 26 * pull, hw = hh * window.innerWidth / window.innerHeight, px = 2 * hh / window.innerHeight, r = rng(91);
+    for (var i = 0; i < N; i++) {
+      var j = (r() * heat.length) | 0;
+      aI[i*4] = (pts[j*2] / window.innerWidth * 2 - 1) * hw + (r() - .5) * px * 3;
+      aI[i*4+1] = -(pts[j*2+1] / window.innerHeight * 2 - 1) * hh + (r() - .5) * px * 3;
+      aI[i*4+2] = (r() - .5) * .3; aI[i*4+3] = heat[j];
+    }
+    geometry.attributes.aI.needsUpdate = true;
+    return true;
+  }
+  if (introOn) {
+    uniforms.uIntro.value = 0;
+    var startIntro = function () { if (introReady) return; introReady = buildIntro(); introStart = performance.now(); if (!introReady) { introOn = false; uniforms.uIntro.value = 2; root.classList.remove('intro'); } };
+    var fontsP = document.fonts && document.fonts.load ? document.fonts.load('400 100px Anton') : Promise.resolve();
+    Promise.race([fontsP, new Promise(function (res) { setTimeout(res, 1500); })]).then(function () { requestAnimationFrame(startIntro); });
+  }
+
   /* ---------- reduced-motion notice ---------- */
   function noteMotion() { $('#motion-note').hidden = !(renderer && reduce); }
   noteMotion();
@@ -1144,16 +1445,16 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   /* ================= loop ================= */
   var prog = measure(), lastProg = prog, speed = 0, fade = .3, time = 0, last = performance.now();
   var camPos = new THREE.Vector3(0, 0, 26), par = new THREE.Vector2();
-  var DIM = [1.0, .95, .9, 1.15, .9, .66, 1.15], SIZE = [1.12, .95, .95, 1.0, .9, .85, 1.0];
+  var DIM = [1.0, .95, .9, 1.15, 1.0, .9, .66, 1.15], SIZE = [1.12, .95, .95, 1.0, 1.0, .9, .85, 1.0];
   var currentScene = -1;
   function lerpA(arr, p) { var k = Math.floor(p), f = p - k; var a = arr[Math.min(arr.length - 1, k)], b = arr[Math.min(arr.length - 1, k + 1)]; return a + (b - a) * f; }
+  function ease(x) { return x * x * (3 - 2 * x); }
 
   function frame(now) {
     requestAnimationFrame(frame);
     if (lenis) lenis.raf(now);
     var dt = Math.min((now - last) / 1000, .05); last = now;
-    var ts = reduce ? .3 : 1;
-    time += dt * ts;
+    time += dt * (reduce ? .3 : 1);
 
     var target = measure();
     prog += (target - prog) * (1 - Math.exp(-dt * (reduce ? 12 : 4.2)));
@@ -1166,33 +1467,60 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
       $('#scene-num').textContent = String(sc + 1).padStart(2, '0');
       $('#scene-name').textContent = NAMES[sc];
       railBtns.forEach(function (b) { b.classList.toggle('on', +sections[+b.dataset.idx].dataset.scene === sc); });
-      dockLinks.forEach(function (d) { d.classList.toggle('on', +d.dataset.dock === sc || (sc === 1 && d.dataset.dock === '0')); });
+      dockLinks.forEach(function (d) { d.classList.toggle('on', +d.dataset.dock === sc || (sc === 1 && d.dataset.dock === '0') || (sc === SC.query && d.dataset.dock === String(SC.galaxy))); });
     }
+    updateRag(prog);
 
     if (fine && !reduce) { cx += (tx - cx) * .2; cy += (ty - cy) * .2; cursor.style.transform = 'translate3d(' + cx + 'px,' + cy + 'px,0)'; }
     if (!renderer || document.hidden) return;
 
-    var k = Math.min(5, Math.floor(prog)), f = prog - k;
-    if (prog >= 6) { k = 6; f = 0; }
+    // intro timeline: gather into the name (0–1.7s), hold, then release into the sphere
+    if (introOn && introReady) {
+      introT = (now - introStart) / 1000 * INTRO_SPEED;   // wall-clock, so slow devices keep the same pacing
+      var u = introT < 1.7 ? introT / 1.7 : introT < 2.5 ? 1 : 1 + Math.min(1, (introT - 2.5) / 1.9);
+      uniforms.uIntro.value = u;
+      if (introT > 2.15 && !nameShown) { nameShown = true; root.classList.remove('intro'); }
+      if (u >= 2) { introOn = false; uniforms.uIntro.value = 2; }
+    }
+
+    var k = Math.min(LAST - 1, Math.floor(prog)), f = prog - k;
+    if (prog >= LAST) { k = LAST; f = 0; }
     var A = camState(k, sceneLP[k]), B = f > 0 ? camState(k + 1, sceneLP[k + 1]) : A;
-    var fc = f * f * (3 - 2 * f);
+    var fc = ease(f);
     var pos = A[0].lerp(B[0], fc), tgt = A[1].lerp(B[1], fc);
+
+    // fly to a focused project body
+    if (focusProj && Math.abs(prog - SC.orbit) > .6) setFocus(0);
+    var wantF = focusProj && Math.abs(prog - SC.orbit) < .4 ? 1 : 0;
+    focusAmt += (wantF - focusAmt) * (1 - Math.exp(-dt * 2.4));
+    if (focusAmt > .001) {
+      bodyWorld(lastFocus - 1, time, bodyV);
+      var dir = pos.clone().sub(bodyV).normalize();
+      var fpos = bodyV.clone().add(dir.multiplyScalar(8 * pull)); fpos.y += 2;
+      var ftgt = bodyV.clone(); ftgt.y -= 1.7;
+      var e2 = ease(Math.min(1, focusAmt));
+      pos.lerp(fpos, e2); tgt.lerp(ftgt, e2);
+    }
+    uniforms.uProj.value = focusProj || hoverProj;
+    workEl.classList.toggle('is-flying', focusAmt > .3);
+
     par.x += ((active ? mouse.x : 0) - par.x) * .04; par.y += ((active ? mouse.y : 0) - par.y) * .04;
-    var pw = 1 - Math.min(1, Math.max(0, prog - 5));
+    var pw = 1 - Math.min(1, Math.max(0, prog - (LAST - 1)));
     camPos.copy(pos); camPos.x += par.x * 1.6 * pw; camPos.y += par.y * 1.0 * pw;
     camera.position.copy(camPos); camTarget.copy(tgt); camera.lookAt(tgt);
 
-    mouseOn += ((active && !reduce ? 1 : 0) - mouseOn) * .08;
+    mouseOn += ((active && !reduce && !introOn ? 1 : 0) - mouseOn) * .08;
     uniforms.uTime.value = time;
-    uniforms.uProg.value = Math.max(0, Math.min(6, prog));
+    uniforms.uProg.value = Math.max(0, Math.min(LAST, prog));
     uniforms.uDim.value = lerpA(DIM, prog);
     uniforms.uSize.value = (portrait ? 2.1 : 2.4) * DPR * lerpA(SIZE, prog);
     uniforms.uHover.value = mouseOn;
     uniforms.uMouse.value.lerp(mouse, .15);
 
     var want = reduce ? 1 : Math.max(.085, .32 - Math.min(speed, 1.5) * .17);
+    if (introOn) want = .16;
     fade += (want - fade) * .12;
-    var fpf = reduce ? 1 : 1 - Math.pow(1 - fade, dt * 60);   // per-frame fade, frame-rate independent
+    var fpf = reduce ? 1 : 1 - Math.pow(1 - fade, dt * 60);
     fadeMat.uniforms.uFade.value = fpf;
     uniforms.uComp.value = fpf * 2.0;
     blitMat.uniforms.uTime.value = time;
@@ -1200,6 +1528,12 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     renderer.setRenderTarget(rt);
     renderer.render(fadeScene, orthoCam);
     renderer.render(scene, camera);
+    // bloom
+    quad.material = brightMat; brightMat.uniforms.uTex.value = rt.texture;
+    renderer.setRenderTarget(bloomA); renderer.render(quadScene, orthoCam);
+    var tw = 1 / bloomA.width, th = 1 / bloomA.height;
+    blurPass(bloomA, bloomB, tw, 0); blurPass(bloomB, bloomA, 0, th);
+    blurPass(bloomA, bloomB, tw * 2.2, 0); blurPass(bloomB, bloomA, 0, th * 2.2);
     renderer.setRenderTarget(null);
     renderer.render(blitScene, orthoCam);
 
@@ -1211,6 +1545,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   resize();
   requestAnimationFrame(frame);
 })();
+
 </script>
 
 </body>
