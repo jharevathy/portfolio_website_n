@@ -1,0 +1,17 @@
+# Root-level temporary test captures & screenshots
+/*.png
+hero_title_*.png
+test_liquid_glass_*.png
+capture_*.py
+glass_sample_preview.html
+
+# Local agent metadata & backups
+.ai_backup_before_restore/
+.gemini/
+.cursor/
+.codex/
+.taste-skill/
+
+# OS artifacts
+Thumbs.db
+.DS_Store
