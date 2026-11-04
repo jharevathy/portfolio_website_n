@@ -1,0 +1,30 @@
+Title: From microstrip antennas to architecting GenAI
+Date: 2026-09-18
+Topic: Career
+Tags: Career, Telecom, Learning
+Summary: I spent years designing microstrip antennas. Then I built my first retrieval pipeline, and found the two had more in common than I expected.
+Quote: I didn't switch fields. I carried signal processing into a new one.
+Takeaway: Signal-processing intuition transfers directly to embeddings and retrieval.
+Takeaway: Small shipped projects teach faster than long courses.
+Takeaway: Domain knowledge is an advantage when you change fields.
+Cover: 6
+
+## Where I started
+
+My early work was radio frequency design: microstrip patches, impedance matching and long nights with a network analyser. It was precise, physical work, and AI felt like a different world.
+
+## The first model I shipped
+
+The turning point was a small internal tool that searched network incident reports. It was rough, but people used it every day, and that feedback loop hooked me.
+
+> I didn't switch fields. I carried signal processing *into a new one.*
+
+## What carried over
+
+- Thinking in vectors and similarity long before I heard the word embedding.
+- Respect for noise, and for measuring before optimising.
+- Comfort with systems where small changes ripple a long way.
+
+## If you are switching too
+
+Pick one real problem from your current domain and solve it with AI. You will learn the tools, and you will bring something most AI engineers don't have: the context.

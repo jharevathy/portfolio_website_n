@@ -65,28 +65,20 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="posts.js"></script>
+<script src="loader.js"></script>
 <script src="blog.js"></script>
 <script>
 (function () {
-  var B = window.Blog, $ = B.$, $$ = B.$$, esc = B.esc, POSTS = window.BLOG.posts;
+  var B = window.Blog, $ = B.$, $$ = B.$$, esc = B.esc, POSTS = [];
   B.chrome();
   B.swarm({ cycle: [1, 2, 3, 4] });
 
-  var topic = null, query = '';
-  var topics = POSTS.map(function (p) { return p.topic; }).filter(function (t, i, a) { return a.indexOf(t) === i; });
-  $('#st-n').textContent = POSTS.length;
-  $('#st-min').textContent = POSTS.reduce(function (s, p) { return s + p.min; }, 0);
-  $('#st-top').textContent = topics.length;
-  $('#topics').innerHTML = '<button class="chip" type="button" aria-pressed="true" data-topic="">All topics</button>' +
-    topics.map(function (t) { return '<button class="chip" type="button" aria-pressed="false" data-topic="' + esc(t) + '">' + esc(t) + '</button>'; }).join('');
+  var topic = null, query = '', q = $('#q');
+  $('#count').textContent = 'Loading blogs…';
   function setTopic(t) {
     topic = t || null;
     $$('[data-topic]').forEach(function (x) { x.setAttribute('aria-pressed', (x.dataset.topic || null) === topic); });
   }
-  $$('[data-topic]').forEach(function (b) { b.addEventListener('click', function () { setTopic(b.dataset.topic); render(); }); });
-
-  var q = $('#q');
   q.addEventListener('input', function () { query = q.value.trim(); $('#clear').hidden = !query; render(); });
   $('#clear').addEventListener('click', function () { q.value = ''; query = ''; $('#clear').hidden = true; render(); q.focus(); });
   addEventListener('keydown', function (e) {
@@ -104,9 +96,9 @@
     var ql = query.toLowerCase();
     var list = POSTS.filter(function (p) {
       if (topic && p.topic !== topic) return false;
-      return !ql || (p.title + ' ' + p.topic + ' ' + p.tags.join(' ') + ' ' + p.quote).toLowerCase().indexOf(ql) >= 0;
+      return !ql || (p.title + ' ' + p.topic + ' ' + p.tags.join(' ') + ' ' + p.quote + ' ' + p.dek).toLowerCase().indexOf(ql) >= 0;
     });
-    $('#count').textContent = list.length === POSTS.length ? 'Showing all ' + list.length + ' blogs' : 'Showing ' + list.length + ' of ' + POSTS.length + ' blogs';
+    $('#count').textContent = list.length === POSTS.length ? 'Showing all ' + list.length + (list.length === 1 ? ' blog' : ' blogs') : 'Showing ' + list.length + ' of ' + POSTS.length + ' blogs';
     var g = $('#grid');
     if (!list.length) {
       g.innerHTML = '<div class="empty glass"><p>No blogs match “' + esc(query || topic) + '”.</p><button class="btn btn--ghost" type="button" id="reset">Clear search and topic</button></div>';
@@ -114,27 +106,41 @@
       return;
     }
     g.innerHTML = list.map(function (p) {
-      return '<a class="card glass" href="' + window.BLOG.href(p.slug) + '"><div class="card__cover"><canvas data-cover="' + esc(p.slug) + '" aria-hidden="true"></canvas></div>' +
-        '<div class="card__body"><span class="topic">' + hl(p.topic) + ' · ' + esc(p.date) + '</span><h2>' + hl(p.title) + '</h2><p class="quote">“' + esc(p.quote) + '”</p>' +
+      var cover = p.coverImage ? '<img src="' + esc(p.coverImage) + '" alt="" loading="lazy">' : '<canvas data-cover="' + esc(p.slug) + '" aria-hidden="true"></canvas>';
+      return '<a class="card glass" href="' + window.BLOG.href(p.slug) + '"><div class="card__cover">' + cover + '</div>' +
+        '<div class="card__body"><span class="topic">' + hl(p.topic) + (p.date ? ' · ' + esc(p.date) : '') + '</span><h2>' + hl(p.title) + '</h2>' +
+        (p.quote ? '<p class="quote">“' + esc(p.quote) + '”</p>' : '') +
         '<div class="meta"><span>' + p.min + ' min read</span><span class="read">Read <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span></div></div></a>';
     }).join('');
-    $$('[data-cover]', g).forEach(function (cv) { B.cover(cv, window.BLOG.find(cv.dataset.cover)); });
+    $$('[data-cover]', g).forEach(function (cv) { B.cover(cv, window.BLOG.find(POSTS, cv.dataset.cover)); });
     // fill every row: three across, with two-across rows first when the count does not divide by three
     var cards = $$('.card', g), n = cards.length, wide = n === 1 ? 0 : n % 3 === 2 ? 2 : n % 3 === 1 ? 4 : 0;
     cards.forEach(function (c, i) { c.classList.toggle('wide', i < wide); c.classList.toggle('solo', n % 2 === 1 && i === n - 1); c.classList.toggle('full', n === 1); });
   }
 
-  // come back to the same search, topic and scroll position after reading a blog
-  var KEY = 'library-state';
-  try {
-    var s = /post\.html/.test(document.referrer) ? JSON.parse(sessionStorage.getItem(KEY) || 'null') : null;
-    if (s) { query = s.q || ''; q.value = query; $('#clear').hidden = !query; setTopic(s.t); }
-  } catch (e) {}
-  render();
-  try { if (s && s.y) requestAnimationFrame(function () { scrollTo(0, s.y); }); } catch (e) {}
+  var KEY = 'library-state', saved = null;
+  try { saved = /post\.html/.test(document.referrer) ? JSON.parse(sessionStorage.getItem(KEY) || 'null') : null; } catch (e) {}
   function save() { try { sessionStorage.setItem(KEY, JSON.stringify({ q: query, t: topic, y: scrollY })); } catch (e) {} }
   addEventListener('pagehide', save);
   document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('.card')) save(); });
+
+  window.BLOG.load().then(function (posts) {
+    POSTS = posts;
+    var topics = POSTS.map(function (p) { return p.topic; }).filter(function (t, i, a) { return a.indexOf(t) === i; });
+    $('#st-n').textContent = POSTS.length;
+    $('#st-min').textContent = POSTS.reduce(function (s, p) { return s + p.min; }, 0);
+    $('#st-top').textContent = topics.length;
+    $('#topics').innerHTML = '<button class="chip" type="button" aria-pressed="true" data-topic="">All topics</button>' +
+      topics.map(function (t) { return '<button class="chip" type="button" aria-pressed="false" data-topic="' + esc(t) + '">' + esc(t) + '</button>'; }).join('');
+    $$('[data-topic]').forEach(function (b) { b.addEventListener('click', function () { setTopic(b.dataset.topic); render(); }); });
+    if (saved) { query = saved.q || ''; q.value = query; $('#clear').hidden = !query; setTopic(saved.t); }
+    if (!POSTS.length) { $('#count').textContent = 'No blogs yet'; $('#grid').innerHTML = '<div class="empty glass"><p>The first blog is on its way.</p></div>'; return; }
+    render();
+    if (saved && saved.y) requestAnimationFrame(function () { scrollTo(0, saved.y); });
+  }, function () {
+    $('#count').textContent = 'Couldn’t load the blogs';
+    $('#grid').innerHTML = '<div class="empty glass"><p>The blogs couldn’t be loaded. Check your connection and refresh the page.</p></div>';
+  });
 })();
 </script>
 </body>

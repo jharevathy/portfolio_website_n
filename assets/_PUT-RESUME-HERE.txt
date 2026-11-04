@@ -1,0 +1,12 @@
+Put your résumé PDF in this folder and name it exactly:
+
+    resume.pdf
+
+so the full path is  assets/resume.pdf
+
+The "Download résumé" buttons on the homepage (hero and contact) and on
+every blog download it as "Nikhil-Salunke-Resume.pdf".
+To update it later, upload a new resume.pdf here and GitHub replaces the old one.
+Until this file exists, the buttons open the résumé on the old site instead.
+
+(Files starting with _ like this note are not published on the website.)

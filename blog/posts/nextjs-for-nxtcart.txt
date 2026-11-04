@@ -1,0 +1,25 @@
+Title: Why I picked Next.js for Nxtcart
+Date: 2026-07-15
+Topic: Engineering
+Tags: Next.js, SEO, React
+Summary: Nxtcart started on Create React App. Moving to Next.js came down to one thing: people finding products through search.
+Takeaway: Client-only React pages are slow to index and slow on first load.
+Takeaway: Server rendering gave every product page real HTML for search engines.
+Takeaway: File-based routing and image optimisation were welcome extras.
+Cover: 2
+
+## The problem with client-only rendering
+
+With Create React App, every product page arrived as an empty shell until JavaScript ran. Search engines indexed it slowly and shoppers on slow phones stared at a spinner.
+
+## What Next.js changed
+
+- Product pages render on the server with full HTML and meta tags.
+- Static generation for categories that rarely change.
+- Built-in image optimisation cut page weight noticeably.
+
+> Server rendering wasn't a nice-to-have. *Search was the product.*
+
+## Would I choose it again?
+
+Yes, for anything where discovery matters. For an internal dashboard behind a login, plain React is still simpler.

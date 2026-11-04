@@ -1,0 +1,4 @@
+---
+layout: null
+---
+{"files":[{% assign first = true %}{% for f in site.static_files %}{% if f.path contains '/blog/posts/' and f.extname == '.txt' %}{% unless first %},{% endunless %}{{ f.name | jsonify }}{% assign first = false %}{% endif %}{% endfor %}]}

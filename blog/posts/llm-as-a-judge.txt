@@ -1,0 +1,31 @@
+Title: Production LLM-as-a-judge without the bias
+Date: 2026-09-02
+Topic: Evaluation
+Tags: Evals, Safety, LLM judge
+Summary: Automated grading is only useful if you can trust it. Three biases quietly break most LLM judges, and each one has a practical fix.
+Takeaway: Swap answer order and compare the verdicts to cancel position bias.
+Takeaway: Grade against a rubric with length limits to stop rewarding verbosity.
+Takeaway: Never let a model judge its own outputs without human calibration.
+Cover: 3
+
+## Why we needed a judge
+
+We were shipping prompt changes weekly and couldn't hand-review thousands of answers. An LLM judge promised fast, cheap evaluation, until we noticed it preferred whichever answer came first.
+
+## Position bias
+
+Run every comparison twice with the answers swapped. If the verdict flips, record a tie.
+
+```python judge.py
+a_first = judge(question, answer_a, answer_b)
+b_first = judge(question, answer_b, answer_a)
+verdict = a_first if a_first == flip(b_first) else "tie"
+```
+
+## Verbosity and self-preference
+
+Judges reward longer answers and answers written in their own style. A strict rubric with explicit length guidance fixes the first. Using a different model family as judge reduces the second.
+
+> A judge you haven't calibrated is just *another opinion.*
+
+Note: Have people grade 200 examples, then measure how often the judge agrees before trusting it on the rest.

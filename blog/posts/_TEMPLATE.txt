@@ -1,0 +1,65 @@
+Title: Write your title here
+Date: 2026-11-04
+Topic: RAG
+Tags: RAG, Chunking, LangChain
+Summary: One or two sentences that appear under the title and on the blog's card.
+Takeaway: First key point (optional, add as many Takeaway lines as you like)
+Takeaway: Second key point
+
+Your blog starts after the first empty line. Just write. A blank line starts a new paragraph.
+
+## This is a section heading
+
+Sections appear in the "Contents" panel beside the blog.
+
+### A smaller heading
+
+Make words **bold** with two stars, or *italic* with one. Put `code words` in backticks.
+Links look like this: [my GitHub](https://github.com/niksalunke)
+
+> A line starting with > becomes a big gold pull quote. *Words in stars turn gold.*
+
+- A line starting with a dash is a bullet point
+- Another bullet point
+
+1. Numbered lists work too
+2. Like this
+
+Note: A paragraph starting with Note:, Tip:, Rule: or Warning: becomes a highlighted box.
+
+![The text in the brackets becomes the caption](images/my-diagram.png)
+
+```python example.py
+# Code goes between three backticks. After them: the language, then a file name (optional).
+print("hello")
+```
+
+
+----------------------------------------------------------------------
+HOW TO PUBLISH (this file itself is never shown on the website)
+----------------------------------------------------------------------
+1. In Notepad++, copy this file, write your blog, and save it with a
+   short name in lowercase with dashes, for example:  rag-chunking.txt
+   That name becomes the link:  .../blog/post.html?p=rag-chunking
+   (Encoding menu should say UTF-8, which is Notepad++'s default.)
+2. On github.com open the repository, go to the folder  blog/posts
+   and click  Add file  >  Upload files . Drag your .txt file in and click
+   Commit changes .
+3. Images: open the folder  blog/images , upload them the same way, and
+   point to them in your text as  ![caption](images/file-name.png)
+4. Wait about a minute and refresh the website. The newest Date is shown
+   first on the homepage and in the library.
+
+Header lines (only Title is really needed):
+  Title      the headline
+  Date       YYYY-MM-DD, used for the order (newest first)
+  Topic      one word or two, used for the topic filter
+  Tags       comma separated
+  Summary    shown under the title and on the card
+  Quote      the line shown on the Library card (default: your first > quote)
+  Takeaway   one per line, shown in the "Key takeaways" box
+  Cover      a number 1 to 6 for the gold cover pattern,
+             or an image such as  images/cover.jpg
+  Draft      yes  hides the blog until you change or delete this line
+To edit a published blog, open its file on GitHub, click the pencil, change
+it, and commit. To remove one, delete its file.

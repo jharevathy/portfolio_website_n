@@ -1,0 +1,31 @@
+Title: Understanding microservices architecture
+Date: 2026-08-12
+Topic: Engineering
+Tags: Node.js, Docker, RabbitMQ
+Summary: Splitting a Node.js monolith into services with Docker and RabbitMQ, and what asynchronous messaging changed.
+Takeaway: Split along business capabilities, not technical layers.
+Takeaway: Let services talk through a queue so one slow service can't stall the rest.
+Takeaway: Containers make every environment the same, from laptop to production.
+Cover: 5
+
+## Why split at all
+
+The monolith deployed as one unit, so a small change to billing meant redeploying search, carts and accounts. Splitting it let each team ship on its own schedule.
+
+## Services talk through queues
+
+Instead of calling each other directly, services publish events to RabbitMQ. The order service doesn't wait for email; it announces the order and moves on.
+
+```javascript publish.js
+const channel = await connection.createChannel();
+await channel.assertQueue("order.created");
+channel.sendToQueue("order.created", Buffer.from(JSON.stringify(order)));
+```
+
+> The queue is where services agree *to disagree.*
+
+## What I would tell my past self
+
+- Start with two or three services, not twelve.
+- Add tracing on day one; debugging across services is hard without it.
+- Make every message handler safe to run twice.

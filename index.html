@@ -294,6 +294,8 @@ main > :not(.skills) { pointer-events: auto; }
 @keyframes introFail { to { opacity: 1; filter: none; } }
 .hero__top { display: flex; justify-content: space-between; gap: 24px; flex-wrap: wrap; }
 .hero__bottom { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end; }
+.hero__cta { display: flex; gap: 10px; flex-wrap: wrap; pointer-events: auto; }
+.hero__cta .btn--solid:hover svg { transform: translateY(2px); }
 .hero__role { font-size: clamp(18px, 1.6vw, 24px); font-weight: 500; letter-spacing: -.01em; max-width: 30ch; }
 .hint { display: flex; gap: 10px; align-items: center; }
 .hint .pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 0 var(--accent); animation: pulse 2.2s var(--ease-out) infinite; }
@@ -432,6 +434,8 @@ html.no-gl .milestone { position: static; opacity: 1; visibility: visible; trans
 .subhead { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; margin-bottom: 22px; }
 .subhead__title { font-size: calc(clamp(40px, 4.6vw, 72px) * var(--d-scale)); }
 .blog-cards .card { color: inherit; text-decoration: none; }
+.blog-cards .is-skel { cursor: default; background: linear-gradient(110deg, rgba(255,255,255,.02) 30%, rgba(255,255,255,.06) 50%, rgba(255,255,255,.02) 70%) 0 0 / 300% 100%, var(--glass-tint); animation: skel 1.6s linear infinite; }
+@keyframes skel { to { background-position: -150% 0, 0 0; } }
 .blog-cards .card h3 { transition: color .3s; }
 .blog-cards .card:hover h3 { color: var(--accent); }
 .blog-cards .new { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; padding: 4px 9px; border-radius: var(--r-pill); background: var(--accent); color: var(--ink); margin-left: auto; margin-right: 12px; }
@@ -558,6 +562,10 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     <div class="wrap hero__bottom">
       <div style="display:grid;gap:18px">
         <p class="hero__role">GenAI Architect at Vodafone Idea, building production‑grade AI systems with measurable outcomes.</p>
+        <div class="hero__cta">
+          <a class="btn btn--solid" href="assets/resume.pdf" download="Nikhil-Salunke-Resume.pdf" data-resume>Download résumé <svg viewBox="0 0 16 16"><path d="M8 2.5v8M4.5 7 8 10.5 11.5 7M3 13.5h10"/></svg></a>
+          <a class="btn btn--ghost" href="blog/">Read the blog</a>
+        </div>
       </div>
       <div class="scrollcue mono"><i></i>Scroll</div>
     </div>
@@ -707,7 +715,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
       <div class="socials">
         <a href="https://github.com/niksalunke" target="_blank" rel="noopener">GitHub ↗</a>
         <a href="https://linkedin.com/in/nikhil-t-salunke" target="_blank" rel="noopener">LinkedIn ↗</a>
-        <a href="https://niksalunke.github.io/portfolio/resume.pdf" target="_blank" rel="noopener">Résumé ↗</a>
+        <a href="assets/resume.pdf" download="Nikhil-Salunke-Resume.pdf" data-resume>Download résumé ↓</a>
       </div>
     </div>
   </section>
@@ -728,28 +736,44 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
 
 
 
-<script src="blog/posts.js"></script>
+<script src="blog/loader.js"></script>
 <script>
-/* Blog tiles for the homepage, built from blog/posts.js (newest three) */
+/* Blog tiles for the homepage: the newest three blogs from blog/posts/ */
 (function () {
   var B = window.BLOG, box = document.getElementById('blog-cards');
   if (!B || !box) return;
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches, fine = matchMedia('(hover: hover) and (pointer: fine)').matches;
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  var P = B.posts, show = P.slice(0, 3), arrow = '<svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg>';
-  box.innerHTML = show.map(function (p, i) {
-    return '<a class="card glass" data-tilt href="' + B.href(p.slug, 'blog/') + '">' +
-      '<div class="card__top"><span class="card__idx foil">' + String(i + 1).padStart(2, '0') + '</span>' + (i === 0 ? '<span class="new">New</span>' : '') + '<span class="card__arrow">' + arrow + '</span></div>' +
-      '<p class="mono">' + esc(p.topic) + ' · ' + esc(p.date) + ' · <span style="white-space:nowrap">' + p.min + ' min read</span></p>' +
-      '<h3 class="h3">' + esc(p.title) + '</h3>' +
-      '<p>' + esc(p.dek) + '</p>' +
-      '<ul class="chips">' + p.tags.map(function (t) { return '<li class="chip">' + esc(t) + '</li>'; }).join('') + '</ul></a>';
-  }).join('');
-  var rest = P.slice(3);
-  document.getElementById('blog-count').textContent = P.length + (P.length === 1 ? ' blog' : ' blogs');
-  document.getElementById('blog-more').textContent = rest.length
-    ? '+ ' + rest.length + ' more in the library — ' + rest.slice(0, 2).map(function (p) { return p.title; }).join(', ') + (rest.length > 2 ? ' …' : '')
-    : 'Every blog lives in the library';
-  var n = document.getElementById('n-blogs'); if (n) n.textContent = P.length;
+  var arrow = '<svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg>';
+  box.innerHTML = '<div class="card glass is-skel" aria-hidden="true"></div><div class="card glass is-skel" aria-hidden="true"></div><div class="card glass is-skel" aria-hidden="true"></div>';
+  B.load().then(function (P) {
+    if (!P.length) { box.innerHTML = ''; document.getElementById('blog-more').textContent = 'The first blog is on its way'; return; }
+    box.innerHTML = P.slice(0, 3).map(function (p, i) {
+      return '<a class="card glass" data-tilt href="' + B.href(p.slug, 'blog/') + '">' +
+        '<div class="card__top"><span class="card__idx foil in">' + String(i + 1).padStart(2, '0') + '</span>' + (i === 0 ? '<span class="new">New</span>' : '') + '<span class="card__arrow">' + arrow + '</span></div>' +
+        '<p class="mono">' + esc(p.topic) + (p.date ? ' · ' + esc(p.date) : '') + ' · <span style="white-space:nowrap">' + p.min + ' min read</span></p>' +
+        '<h3 class="h3">' + esc(p.title) + '</h3>' +
+        (p.dek ? '<p>' + esc(p.dek) + '</p>' : '') +
+        '<ul class="chips">' + p.tags.map(function (t) { return '<li class="chip">' + esc(t) + '</li>'; }).join('') + '</ul></a>';
+    }).join('');
+    var rest = P.slice(3);
+    document.getElementById('blog-count').textContent = P.length + (P.length === 1 ? ' blog' : ' blogs');
+    document.getElementById('blog-more').textContent = rest.length
+      ? '+ ' + rest.length + ' more in the library — ' + rest.slice(0, 2).map(function (p) { return p.title; }).join(', ') + (rest.length > 2 ? ' …' : '')
+      : 'Every blog lives in the library';
+    var n = document.getElementById('n-blogs'); if (n) n.textContent = P.length;
+    // the same 3D tilt as the project cards
+    if (fine && !reduce) Array.prototype.forEach.call(box.querySelectorAll('[data-tilt]'), function (el) {
+      el.addEventListener('pointermove', function (e) {
+        var r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+        el.style.transform = 'rotateY(' + (x * 10).toFixed(2) + 'deg) rotateX(' + (-y * 10).toFixed(2) + 'deg) translateZ(10px)';
+      });
+      el.addEventListener('pointerleave', function () { el.style.transform = ''; });
+    });
+  }, function () {
+    box.innerHTML = '';
+    document.getElementById('blog-more').textContent = 'The blogs couldn’t be loaded right now';
+  });
 })();
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1538,6 +1562,17 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  /* ---------- résumé: download assets/resume.pdf, or open the old site's copy until it is added ---------- */
+  (function () {
+    var links = $$('[data-resume]'); if (!links.length) return;
+    fetch('assets/resume.pdf', { method: 'HEAD' }).then(function (r) {
+      if (r.ok && !/text\/html/.test(r.headers.get('content-type') || '')) return;
+      throw 0;
+    }).catch(function () {
+      links.forEach(function (a) { a.href = 'https://niksalunke.github.io/portfolio/resume.pdf'; a.removeAttribute('download'); a.target = '_blank'; a.rel = 'noopener'; });
+    });
+  })();
 
   /* ---------- honours: seals ---------- */
   var SEAL = {

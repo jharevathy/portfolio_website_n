@@ -1,0 +1,44 @@
+Title: Beyond naive RAG: Graph-RAG with hybrid search
+Date: 2026-10-06
+Topic: RAG
+Tags: ColBERT, Vectors, Knowledge graph
+Summary: Vector search finds text that sounds alike. It doesn't find facts that are connected. A knowledge graph plus hybrid retrieval closes that gap.
+Takeaway: Dense vectors alone miss answers that need two or three connected facts.
+Takeaway: Run keyword, dense and late-interaction retrieval together and fuse the rankings.
+Takeaway: Use the graph to expand context around good hits, not to replace retrieval.
+Cover: 4
+
+## Where naive RAG breaks
+
+A policy assistant was asked which approvals a contractor needs before getting VPN access. The answer lived in three documents that never mention each other by name. Top-k vector search returned the most similar paragraph and missed the other two.
+
+That is the core limit: **embeddings measure resemblance**, and multi-hop questions need relationships.
+
+> Similarity is not the same thing as *relevance.*
+
+## Three retrievers, one ranking
+
+- **BM25** catches exact terms such as policy IDs and product codes.
+- **Dense vectors** catch paraphrases and synonyms.
+- **ColBERT** scores token by token, which keeps precision on long passages.
+
+Reciprocal rank fusion merges the three lists without tuning score scales.
+
+```python fusion.py
+def rrf(rankings, k=60):
+    scores = {}
+    for ranking in rankings:
+        for rank, doc_id in enumerate(ranking):
+            scores[doc_id] = scores.get(doc_id, 0) + 1 / (k + rank + 1)
+    return sorted(scores, key=scores.get, reverse=True)
+```
+
+## Adding the graph
+
+Entities and their relations are extracted once at indexing time. At query time the best hits become entry points, and the graph pulls in their one-hop neighbours as extra context.
+
+Tip: Expanding two hops usually floods the prompt. One hop with a relevance cut-off gave the best answers for the least tokens.
+
+## What changed in production
+
+Multi-hop questions stopped failing silently, and answers started citing every document they relied on. Latency rose slightly, which a small re-ranker cache paid back.

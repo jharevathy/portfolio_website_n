@@ -39,16 +39,19 @@
 </footer>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="posts.js"></script>
+<script src="vendor/marked.min.js"></script>
+<script src="loader.js"></script>
 <script src="blog.js"></script>
 <script>
 (function () {
-  var B = window.Blog, $ = B.$, $$ = B.$$, esc = B.esc, POSTS = window.BLOG.posts, reduce = B.reduce;
+  var B = window.Blog, $ = B.$, $$ = B.$$, esc = B.esc, reduce = B.reduce, POSTS = [];
   B.chrome();
   B.swarm({ form: 0, dim: .42 });
 
+  /* ---------- turning a blog's text into the page ---------- */
+  var LANG = { js: 'JavaScript', javascript: 'JavaScript', ts: 'TypeScript', typescript: 'TypeScript', py: 'Python', python: 'Python', bash: 'Shell', sh: 'Shell', shell: 'Shell', json: 'JSON', yaml: 'YAML', yml: 'YAML', sql: 'SQL', html: 'HTML', css: 'CSS', java: 'Java', go: 'Go', rust: 'Rust', c: 'C', cpp: 'C++', text: 'Text' };
   function highlight(code) {
-    var re = /(#.*$|\/\/.*$)|("[^"]*"|'[^']*')|\b(from|import|class|def|return|const|await|async|for|in|if|else|function|new|let)\b/gm, out = '', last = 0, m;
+    var re = /(#.*$|\/\/.*$)|("[^"\n]*"|'[^'\n]*')|\b(from|import|export|class|def|return|const|await|async|for|in|if|elif|else|function|new|let|var|while|try|except|catch|with|as|lambda|yield|None|True|False|null|true|false)\b/gm, out = '', last = 0, m;
     while ((m = re.exec(code))) {
       out += esc(code.slice(last, m.index)) + '<span class="' + (m[1] ? 'tk-c' : m[2] ? 'tk-s' : 'tk-k') + '">' + esc(m[0]) + '</span>';
       last = re.lastIndex;
@@ -56,15 +59,47 @@
     return out + esc(code.slice(last));
   }
   var CALLOUT = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2.5 20h19z"/><path d="M12 10v4M12 17.2v.1"/></svg>';
-  function block(b, lead) {
-    if (b.h3) return '<h3>' + b.h3 + '</h3>';
-    if (b.q) return '<blockquote class="pull"><p>' + b.q + '</p></blockquote>';
-    if (b.ul) return '<ul>' + b.ul.map(function (x) { return '<li>' + x + '</li>'; }).join('') + '</ul>';
-    if (b.code) return '<div class="codeblock"><div class="codeblock__bar"><span class="mono">' + esc(b.file || 'Code') + '</span><button type="button" data-copycode>Copy</button></div><pre>' + highlight(b.code) + '</pre></div>';
-    if (b.call) return '<div class="callout">' + CALLOUT + '<p><b>' + b.call + '</b> ' + b.p + '</p></div>';
-    if (b.html) return b.html;
-    return '<p' + (lead ? ' class="lead"' : '') + '>' + b.p + '</p>';
+  var inline = function (t) { return marked.parseInline(t || ''); };
+  var plain = function (t) { var d = document.createElement('div'); d.innerHTML = inline(t); return d.textContent; };
+  function block(t, state) {
+    switch (t.type) {
+      case 'heading': return '<h3>' + inline(t.text) + '</h3>';
+      case 'paragraph':
+        if (t.tokens && t.tokens.length === 1 && t.tokens[0].type === 'image') {
+          var im = t.tokens[0];
+          return '<figure class="figure"><img src="' + esc(im.href) + '" alt="' + esc(im.text) + '" loading="lazy">' + (im.text ? '<figcaption class="mono">' + esc(im.text) + '</figcaption>' : '') + '</figure>';
+        }
+        var c = /^(note|tip|rule|warning|important)\s*:\s*/i.exec(t.text);
+        if (c) return '<div class="callout">' + CALLOUT + '<p><b>' + c[1].charAt(0).toUpperCase() + c[1].slice(1).toLowerCase() + '.</b> ' + inline(t.text.slice(c[0].length)) + '</p></div>';
+        var lead = !state.lead; state.lead = true;
+        return '<p' + (lead ? ' class="lead"' : '') + '>' + inline(t.text) + '</p>';
+      case 'blockquote':
+        return '<blockquote class="pull"><p>' + inline(t.text.replace(/\n+/g, ' ')).replace(/<em>/g, '<span class="gold">').replace(/<\/em>/g, '</span>') + '</p></blockquote>';
+      case 'list':
+        var tag = t.ordered ? 'ol' : 'ul';
+        return '<' + tag + '>' + t.items.map(function (it) { return '<li>' + inline(it.text) + '</li>'; }).join('') + '</' + tag + '>';
+      case 'code':
+        var info = (t.lang || '').trim().split(/\s+/), lang = (info[0] || '').toLowerCase(), file = info.slice(1).join(' ');
+        var label = [file, LANG[lang] || (lang ? lang.toUpperCase() : '')].filter(Boolean).join(' · ') || 'Code';
+        return '<div class="codeblock"><div class="codeblock__bar"><span class="mono">' + esc(label) + '</span><button type="button" data-copycode>Copy</button></div><pre>' + highlight(t.text) + '</pre></div>';
+      case 'table': return '<div class="table">' + marked.parser([t]) + '</div>';
+      case 'html': return t.text;
+      case 'hr': return '<hr>';
+      case 'space': return '';
+      default: return t.text ? '<p>' + inline(t.text) + '</p>' : '';
+    }
   }
+  // "## Heading" starts a section in the contents panel; anything before the first one is the introduction
+  function sections(md) {
+    var out = [], cur = { h: '', html: '' }, state = {};
+    marked.lexer(md).forEach(function (t) {
+      if (t.type === 'heading' && t.depth <= 2) { if (cur.h || cur.html) out.push(cur); cur = { h: t.text, html: '' }; return; }
+      cur.html += block(t, state);
+    });
+    if (cur.h || cur.html) out.push(cur);
+    return out;
+  }
+
   function neighbour(x, dir) {
     var nx = dir === 'nx';
     if (!x) return '<a class="glass' + (nx ? ' nx' : '') + '" href="./"><span class="mono">' + (nx ? 'You’ve reached the end' : 'This is the newest blog') + '</span><strong>Back to the library</strong></a>';
@@ -72,37 +107,41 @@
   }
 
   var cur = null;
-  function render(p) {
+  function render(p, failed) {
     cur = p;
     var root = $('#post');
     if (!p) {
-      document.title = 'Blog not found · Nikhil Salunke';
-      root.innerHTML = '<div class="missing glass enter"><p class="mono">404 · Blog</p><h1 class="display" style="font-size:clamp(40px,6vw,80px)">This blog has moved</h1><p class="lede">The link may be out of date. Every blog is in the library.</p><a class="btn btn--solid" href="./">Open the library <svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg></a></div>';
+      document.title = (failed ? 'Couldn’t load the blog' : 'Blog not found') + ' · Nikhil Salunke';
+      root.innerHTML = '<div class="missing glass enter"><p class="mono">' + (failed ? 'Connection' : '404 · Blog') + '</p><h1 class="display" style="font-size:clamp(40px,6vw,80px)">' + (failed ? 'Couldn’t load this blog' : 'This blog has moved') + '</h1><p class="lede">' + (failed ? 'Check your connection and refresh the page.' : 'The link may be out of date. Every blog is in the library.') + '</p><a class="btn btn--solid" href="./">Open the library <svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg></a></div>';
       return;
     }
     document.title = p.title + ' · Nikhil Salunke';
-    var md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', p.dek);
-    var prev = POSTS[p.i - 1], next = POSTS[p.i + 1], leadDone = false;
-    var body = p.secs.map(function (s, si) {
-      return '<h2 id="sec-' + si + '"><span class="n">' + String(si + 1).padStart(2, '0') + '</span>' + esc(s.h) + '</h2>' +
-        s.b.map(function (b) { var lead = !leadDone && b.p && !b.call; if (lead) leadDone = true; return block(b, lead); }).join('');
+    var md = document.querySelector('meta[name="description"]'); if (md && p.dek) md.setAttribute('content', p.dek);
+    var prev = POSTS[p.i - 1], next = POSTS[p.i + 1], secs = sections(p.body), n = 0;
+    var body = secs.map(function (s) {
+      if (!s.h) return s.html;
+      var si = n++;
+      return '<h2 id="sec-' + si + '"><span class="n">' + String(si + 1).padStart(2, '0') + '</span>' + inline(s.h) + '</h2>' + s.html;
     }).join('');
+    var toc = secs.filter(function (s) { return s.h; });
     root.innerHTML =
       '<header class="art-hero enter">' +
         '<nav class="crumbs mono" aria-label="Breadcrumb"><a href="../">Home</a><span>/</span><a href="./">Library</a><span>/</span><span class="topic">' + esc(p.topic) + '</span></nav>' +
         '<h1 class="display art-title">' + esc(p.title) + '</h1>' +
-        '<p class="art-dek">' + esc(p.dek) + '</p>' +
-        '<div class="chips">' + p.tags.map(function (t) { return '<span class="chip">' + esc(t) + '</span>'; }).join('') + '</div>' +
-        '<div class="byline"><span class="avatar" aria-hidden="true">NS</span><div><strong>Nikhil Salunke</strong><span class="mono">GenAI Architect</span></div><div class="meta"><span>' + esc(p.date) + '</span><span>' + p.min + ' min read</span></div></div>' +
+        (p.dek ? '<p class="art-dek">' + esc(p.dek) + '</p>' : '') +
+        (p.tags.length ? '<div class="chips">' + p.tags.map(function (t) { return '<span class="chip">' + esc(t) + '</span>'; }).join('') + '</div>' : '') +
+        '<div class="byline"><span class="avatar" aria-hidden="true">NS</span><div><strong>Nikhil Salunke</strong><span class="mono">GenAI Architect</span></div><div class="meta">' + (p.date ? '<span>' + esc(p.date) + '</span>' : '') + '<span>' + p.min + ' min read</span></div></div>' +
       '</header>' +
-      '<div class="reader enter" style="animation-delay:.12s">' +
+      '<div class="reader enter' + (toc.length ? '' : ' no-toc') + '" style="animation-delay:.12s">' +
         '<details class="toc" id="toc" open><summary class="mono">Contents · <span class="left" id="left">' + p.min + ' min left</span></summary><ol>' +
-          p.secs.map(function (s, si) { return '<li><a href="#sec-' + si + '" data-sec="' + si + '">' + esc(s.h) + '</a></li>'; }).join('') +
+          toc.map(function (s, si) { return '<li><a href="#sec-' + si + '" data-sec="' + si + '">' + esc(plain(s.h)) + '</a></li>'; }).join('') +
         '</ol><div class="share"><button class="chip" type="button" id="copylink">Copy link</button><a class="chip" id="li-share" target="_blank" rel="noopener">Share on LinkedIn</a></div></details>' +
-        '<article class="paper glass"><div class="prose"><div class="takeaways"><p class="mono">Key takeaways</p><ol>' + p.take.map(function (t) { return '<li>' + esc(t) + '</li>'; }).join('') + '</ol></div>' + body + '</div></article>' +
+        '<article class="paper glass"><div class="prose">' +
+          (p.take.length ? '<div class="takeaways"><p class="mono">Key takeaways</p><ol>' + p.take.map(function (t) { return '<li>' + inline(t) + '</li>'; }).join('') + '</ol></div>' : '') +
+          body + '</div></article>' +
       '</div>' +
       '<div class="endcap">' +
-        '<div class="author glass"><span class="avatar" aria-hidden="true">NS</span><div><strong>Written by Nikhil Salunke</strong><p>GenAI Architect at Vodafone Idea, building production AI on open-source stacks.</p></div><a class="btn btn--ghost" href="../#s-contact">Work with me</a></div>' +
+        '<div class="author glass"><span class="avatar" aria-hidden="true">NS</span><div><strong>Written by Nikhil Salunke</strong><p>GenAI Architect at Vodafone Idea, building production AI on open-source stacks.</p></div><div class="author__cta"><a class="btn btn--ghost" href="../assets/resume.pdf" download="Nikhil-Salunke-Resume.pdf" data-resume>Download résumé</a><a class="btn btn--solid" href="../#s-contact">Work with me</a></div></div>' +
         '<nav class="nextprev" aria-label="More blogs">' + neighbour(prev, 'pv') + neighbour(next, 'nx') + '</nav>' +
         '<button class="btn btn--ghost totop" type="button" id="totop">Back to top</button>' +
       '</div>';
@@ -115,12 +154,13 @@
     $('#copylink').addEventListener('click', function () { B.copy(this, location.href); });
     $('#li-share').href = 'https://www.linkedin.com/sharing/share-offsite/?url=' + encodeURIComponent(location.href);
     $('#totop').addEventListener('click', function () { scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' }); });
+    B.resume(root);
     onScroll();
   }
 
   // Previous / Next swap the blog in place, so the swarm keeps flowing between them
   function open(slug, push) {
-    var p = window.BLOG.find(slug);
+    var p = window.BLOG.find(POSTS, slug);
     if (!p) return false;
     if (push) history.pushState({ slug: slug }, '', window.BLOG.href(slug));
     render(p);
@@ -132,7 +172,7 @@
     if (!a || e.metaKey || e.ctrlKey || e.shiftKey || e.button !== 0) return;
     if (open(a.dataset.slug, true)) e.preventDefault();
   });
-  addEventListener('popstate', function () { render(window.BLOG.find(new URLSearchParams(location.search).get('p'))); });
+  addEventListener('popstate', function () { render(window.BLOG.find(POSTS, new URLSearchParams(location.search).get('p'))); });
   addEventListener('keydown', function (e) {
     var tag = (document.activeElement || {}).tagName;
     if (!cur || tag === 'INPUT' || tag === 'TEXTAREA' || e.metaKey || e.ctrlKey || e.altKey) return;
@@ -153,7 +193,11 @@
   addEventListener('scroll', onScroll, { passive: true });
   addEventListener('resize', onScroll);
 
-  render(window.BLOG.find(new URLSearchParams(location.search).get('p')) || (location.search ? null : POSTS[0]));
+  window.BLOG.load().then(function (posts) {
+    POSTS = posts;
+    var slug = new URLSearchParams(location.search).get('p');
+    render(slug ? window.BLOG.find(POSTS, slug) : POSTS[0]);
+  }, function () { render(null, true); });
 })();
 </script>
 </body>

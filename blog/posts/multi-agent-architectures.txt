@@ -1,0 +1,57 @@
+Title: Deconstructing multi-agent architectures
+Date: 2026-10-20
+Topic: Agents
+Tags: LangGraph, Multi-agent, System design
+Summary: Supervisors, routers or decentralised swarms? A systems-engineering look at agent coordination in production: token latency budgets, circular deadlock and state checkpointing.
+Takeaway: Treat agents as bounded state machines, not free-roaming digital colleagues.
+Takeaway: A router plus a fixed graph (DAG) beats an open swarm for most enterprise work.
+Takeaway: Validate structured output at every hand-off and cap retries to stop loops.
+Cover: 1
+
+## The illusion of free agency
+
+When developers first experiment with autonomous agents, the temptation is to assemble an open-ended conversational pool: an Analyst talks to a Researcher, who delegates to a Coder, who asks a Reviewer for approval. In a demo this works. In production it degrades into message loops, runaway token spend and context drift.
+
+Reliable generative systems treat agents as **stateful finite state machines** with bounded transitions and hard guardrails.
+
+> An agent you cannot bound is an agent you cannot *ship.*
+
+## Three topologies compared
+
+Across enterprise deployments, three coordination patterns keep appearing. Each trades latency against control.
+
+![Supervisor, router plus DAG, and swarm hand-off](images/agent-topologies.svg)
+
+## Why DAGs win most of the time
+
+For most commercial applications, a hybrid router with a deterministic graph outperforms an open swarm. The state is explicit, so every step can be logged, replayed and tested.
+
+```python state.py
+from typing import TypedDict, Annotated, Sequence
+import operator
+
+# Bounded state shared by every node in the graph
+class AgentSystemState(TypedDict):
+    input_query: str
+    intermediate_steps: Annotated[Sequence[dict], operator.add]
+    evaluation_score: float
+    retry_count: int
+    final_response: str
+```
+
+Rule: Never let the supervisor read raw tool dumps. Summarise tool output at the boundary node before control returns to the state manager.
+
+## Three fatal failure modes
+
+### Circular deadlock
+
+Agent A rejects Agent B's output and B regenerates the same payload. Cap the loop with a hard `max_depth` and lower the temperature on each retry.
+
+### Context bleed
+
+Every turn bloats the shared prompt. Give each sub-agent its own scratchpad and commit only its final output to the shared state.
+
+### Silent hallucinated hand-offs
+
+- Require structured JSON at every edge, validated with Pydantic.
+- When validation fails, route straight to a human-in-the-loop queue.

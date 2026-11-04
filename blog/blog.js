@@ -18,7 +18,7 @@
     var c = cv.getContext('2d'), R = rng(p.slug), i, k, x, y, a;
     var bg = c.createLinearGradient(0, 0, W, H); bg.addColorStop(0, '#0b0c12'); bg.addColorStop(1, '#06070b'); c.fillStyle = bg; c.fillRect(0, 0, W, H);
     c.globalCompositeOperation = 'lighter';
-    var cx = W * (.55 + R() * .25), cy = H * .5, style = (p.cover || 0) % 6;
+    var pick = R(), cx = W * (.55 + R() * .25), cy = H * .5, style = (p.cover == null ? Math.floor(pick * 6) : p.cover) % 6;
     if (style === 0) { // orbits
       for (k = 0; k < 3; k++) for (i = 0; i < 260; i++) { a = i / 260 * 6.283; dot(c, cx + Math.cos(a) * (90 + k * 60), cy + Math.sin(a) * (34 + k * 22), .8 + (Math.sin(a) + 1) * .6, GOLD[k + 1], .55); }
       for (k = 0; k < 3; k++) { a = R() * 6.283; glow(c, cx + Math.cos(a) * (90 + k * 60), cy + Math.sin(a) * (34 + k * 22), 26, .9); }
@@ -261,5 +261,20 @@
     return api;
   }
 
-  window.Blog = { $: $, $$: $$, esc: esc, cover: cover, copy: copy, chrome: chrome, swarm: swarm, reduce: reduce };
+  /* ---------- résumé: download the PDF from assets/, or fall back to the old site's copy ---------- */
+  var RESUME_FALLBACK = 'https://niksalunke.github.io/portfolio/resume.pdf', resumeOk = null;
+  function resume(root) {
+    var links = $$('[data-resume]', root || document);
+    if (!links.length) return;
+    var apply = function () {
+      if (resumeOk) return;
+      links.forEach(function (a) { a.href = RESUME_FALLBACK; a.removeAttribute('download'); a.target = '_blank'; a.rel = 'noopener'; });
+    };
+    if (resumeOk !== null) return apply();
+    fetch(links[0].getAttribute('href'), { method: 'HEAD' }).then(function (r) {
+      resumeOk = r.ok && !/text\/html/.test(r.headers.get('content-type') || ''); apply();
+    }, function () { resumeOk = false; apply(); });
+  }
+
+  window.Blog = { $: $, $$: $$, esc: esc, cover: cover, copy: copy, chrome: chrome, swarm: swarm, reduce: reduce, resume: resume };
 })();

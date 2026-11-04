@@ -1,0 +1,6 @@
+# GitHub Pages builds this site with Jekyll. That build writes blog/manifest.json,
+# the list of blog files the site reads. Everything else is served as it is.
+exclude:
+  - README.md
+  - design-system
+  - .gitignore
