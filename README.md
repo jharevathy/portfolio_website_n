@@ -8,9 +8,22 @@ build step, ready for GitHub Pages.
 
 ```
 index.html          The live site (markup, styles and the WebGL swarm engine)
+blog/index.html     The Library: every blog as a card, with topic filter and search
+blog/post.html      The reader: one blog, opened with ?p=<slug>
+blog/posts.js       The blogs themselves (shared by the homepage, Library and reader)
+blog/blog.js        Shared blog code: gold covers, cursor, the Library swarm
+blog/blog.css       Blog styles (same tokens as the homepage)
 concept/index.html  The annotated review version of the design (scene captions + design primitives)
 design-system/      Design notes
 ```
+
+## Blogs
+
+All blogs live in `blog/posts.js`, newest first. To add one, copy an entry,
+give it a new `slug` and edit the text; the homepage panel, the Library and
+the reader pick it up automatically, and reading time is worked out from its
+length. The comment at the top of the file lists the block types (paragraph,
+sub-heading, pull quote, list, code, callout).
 
 ## Scenes
 

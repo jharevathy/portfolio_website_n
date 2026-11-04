@@ -406,14 +406,39 @@ html.no-gl .milestone { position: static; opacity: 1; visibility: visible; trans
 /* 06 proof + writing */
 .proof { padding-block: 18vh 18vh; display: grid; gap: 18px; }
 .split { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 18px; align-items: start; }
-.certs, .posts { padding: 10px 24px; }
-.certs li, .posts li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: baseline; padding: 18px 0; }
-.certs li + li, .posts li + li { border-top: 1px solid var(--hair); }
-.certs strong, .posts strong { font-weight: 600; font-size: 16.5px; letter-spacing: -.01em; }
-.certs small, .posts small { display: block; color: var(--paper-2); font-size: 14px; margin-top: 4px; }
-.posts a { display: contents; }
-.posts li { transition: transform .5s var(--ease-out); }
-.posts li:hover { transform: translateX(8px); }
+.certs, .posts { padding: 10px 24px 24px; }
+.tally { display: grid; justify-items: end; gap: 6px; }
+.tally .count { color: transparent; }
+.honours li { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 16px 10px 16px 0; cursor: pointer; border-radius: 12px; }
+.honours li + li { border-top: 1px solid var(--hair); }
+.honours li::after { content: ""; position: absolute; inset: 0; border-radius: 12px; pointer-events: none; opacity: 0; background: linear-gradient(105deg, transparent 30%, rgba(255,236,208,.12) 48%, transparent 66%); background-size: 260% 100%; background-position: 120% 0; }
+.honours li.lit::after { animation: sweep 1.3s var(--ease-out); }
+@keyframes sweep { 0% { opacity: 1; background-position: 120% 0; } 100% { opacity: 0; background-position: -40% 0; } }
+.honours strong { font-weight: 600; font-size: 16.5px; letter-spacing: -.01em; display: block; transition: color .3s; }
+.honours li:hover strong { color: var(--accent); }
+.honours small { display: block; color: var(--paper-2); font-size: 14px; margin-top: 3px; }
+.seal { width: 44px; height: 44px; perspective: 400px; }
+.seal svg { width: 44px; height: 44px; display: block; }
+.seal.spin svg { animation: coin 1.1s var(--ease-out); }
+@keyframes coin { from { transform: rotateY(0); } to { transform: rotateY(360deg); } }
+.kindtag { font-family: var(--f-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--paper-3); margin-left: 8px; }
+.kindtag.award { color: var(--accent); }
+#burst { position: fixed; inset: 0; z-index: 25; width: 100%; height: 100%; pointer-events: none; }
+.topic { font-family: var(--f-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+.feature { display: grid; gap: 12px; padding: 22px; margin: 10px 0 6px; border-radius: 16px; background: linear-gradient(160deg, rgba(243,198,140,.1), rgba(243,198,140,.02) 60%); box-shadow: inset 0 0 0 1px rgba(243,198,140,.22); transition: box-shadow .4s, transform .5s var(--ease-out); }
+.feature:hover { box-shadow: inset 0 0 0 1px rgba(243,198,140,.5); transform: translateY(-2px); }
+.feature__row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.new { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; padding: 4px 9px; border-radius: var(--r-pill); background: var(--accent); color: var(--ink); }
+.feature h3 { font-family: var(--f-display); font-weight: 400; text-transform: uppercase; font-size: clamp(28px, 2.6vw, 38px); line-height: .98; text-wrap: balance; }
+.feature p { color: var(--paper-2); font-size: 15.5px; max-width: 58ch; }
+.feature .meta { display: flex; gap: 14px; flex-wrap: wrap; font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .08em; color: var(--paper-3); text-transform: uppercase; }
+.rows li a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 16px 0; transition: transform .5s var(--ease-out); }
+.rows li + li a { border-top: 1px solid var(--hair); }
+.rows li a:hover { transform: translateX(8px); }
+.rows li a:hover strong { color: var(--accent); }
+.rows strong { font-weight: 600; font-size: 16.5px; letter-spacing: -.01em; transition: color .3s; display: block; margin-top: 4px; }
+.rows small { display: block; color: var(--paper-2); font-size: 14px; margin-top: 3px; }
+.panel-foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 18px; border-top: 1px solid var(--hair); flex-wrap: wrap; }
 .panel-title { padding: 18px 0 8px; }
 
 /* 07 contact */
@@ -484,6 +509,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   .cards .card:last-child { grid-column: auto; }
   .card { min-height: 0; }
   .head { grid-template-columns: 1fr; }
+  .tally { justify-items: start; }
   .split { grid-template-columns: 1fr; }
   .milestone { width: 300px; padding: 20px; }
   .skills { min-height: 0; }
@@ -503,6 +529,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
 <script>try { if (!matchMedia('(prefers-reduced-motion: reduce)').matches && !location.hash) document.documentElement.classList.add('intro'); } catch (e) {}</script>
 <div class="labels" id="labels" aria-hidden="true"></div>
 <div class="cursor" id="cursor" aria-hidden="true"></div>
+<canvas id="burst" aria-hidden="true"></canvas>
 
 <header class="topbar">
   <div class="wrap">
@@ -512,6 +539,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
     </a>
     <p class="scene-now mono"><span id="scene-num">01</span><span id="scene-name">Sphere</span></p>
     <div class="topbar__right">
+      <a class="btn btn--ghost" href="blog/">Blog</a>
       <a class="btn btn--ghost" href="https://github.com/niksalunke" target="_blank" rel="noopener">GitHub</a>
       <a class="btn btn--solid" href="#s-contact" data-jump>Let’s talk</a>
     </div>
@@ -645,26 +673,27 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   <section class="scene wrap proof" id="s-proof" data-scene="6" data-name="Terrain">
     <div class="head" style="margin-bottom:22px">
       <h2 class="display h2" data-reveal>Proof &amp;<br>writing<span class="rule" aria-hidden="true"><i></i></span></h2>
-      <p class="count foil">5 · 3</p>
+      <div class="tally"><p class="count foil">5 · <span id="n-blogs">6</span></p><span class="mono">Honours · Blogs</span></div>
     </div>
     <div class="split">
       <div class="certs glass">
         <p class="mono panel-title">Certifications &amp; recognition</p>
-        <ul>
-          <li><div><strong>OCI Generative AI Certified Professional</strong><small>Oracle</small></div><span class="mono">2024</span></li>
-          <li><div><strong>Dream Team</strong><small>Vodafone Idea Ltd</small></div><span class="mono">2026</span></li>
-          <li><div><strong>Rockstar Performer</strong><small>Vodafone Idea Ltd</small></div><span class="mono">2025</span></li>
-          <li><div><strong>AWS Academy Graduate</strong><small>AWS</small></div><span class="mono">2022</span></li>
-          <li><div><strong>Product Management</strong><small>TurnIP Innovations</small></div><span class="mono">2022</span></li>
+        <ul class="honours" id="honours">
+          <li data-kind="cert" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>OCI Generative AI Certified Professional</strong><small>Oracle<span class="kindtag">Certification</span></small></div><span class="mono">2024</span></li>
+          <li data-kind="award" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>Dream Team</strong><small>Vodafone Idea Ltd<span class="kindtag award">Award</span></small></div><span class="mono">2026</span></li>
+          <li data-kind="award" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>Rockstar Performer</strong><small>Vodafone Idea Ltd<span class="kindtag award">Award</span></small></div><span class="mono">2025</span></li>
+          <li data-kind="cert" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>AWS Academy Graduate</strong><small>AWS<span class="kindtag">Certification</span></small></div><span class="mono">2022</span></li>
+          <li data-kind="cert" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>Product Management</strong><small>TurnIP Innovations<span class="kindtag">Certification</span></small></div><span class="mono">2022</span></li>
         </ul>
       </div>
       <div class="posts glass">
-        <p class="mono panel-title">Writing</p>
-        <ul>
-          <li><div><strong>From microstrip antennas to architecting GenAI solutions</strong><small>My breakthrough into AI from a purely telecom background.</small></div><span class="mono">5 min</span></li>
-          <li><div><strong>Understanding microservices architecture</strong><small>Node.js services, Docker and RabbitMQ for asynchronous communication.</small></div><span class="mono">8 min</span></li>
-          <li><div><strong>Why I picked Next.js for Nxtcart</strong><small>CRA vs Next.js, and why SSR and SEO mattered.</small></div><span class="mono">6 min</span></li>
-        </ul>
+        <p class="mono panel-title">Latest blogs</p>
+        <a class="feature" id="home-feature" href="blog/"></a>
+        <ul class="rows" id="home-rows"></ul>
+        <div class="panel-foot">
+          <span class="mono" id="home-total"></span>
+          <a class="btn btn--solid" href="blog/">Open the library <svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg></a>
+        </div>
       </div>
     </div>
   </section>
@@ -703,6 +732,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
 
 
 
+<script src="blog/posts.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
@@ -1482,5 +1512,111 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
 
 </script>
 
+<script>
+/* Latest blogs panel + a gold-foil celebration for honours */
+(function () {
+  var $ = function (s, r) { return (r || document).querySelector(s); };
+  var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  /* ---------- latest blogs ---------- */
+  var B = window.BLOG;
+  if (B && B.posts.length) {
+    var P = B.posts, top = P[0], f = $('#home-feature');
+    f.href = B.href(top.slug, 'blog/');
+    f.innerHTML = '<div class="feature__row"><span class="new">New</span><span class="topic">' + esc(top.topic) + '</span></div><h3>' + esc(top.title) + '</h3><p>' + esc(top.dek) + '</p><div class="meta"><span>' + esc(top.date) + '</span><span>' + top.min + ' min read</span></div>';
+    $('#home-rows').innerHTML = P.slice(1, 4).map(function (p) {
+      return '<li><a href="' + B.href(p.slug, 'blog/') + '"><div><span class="topic">' + esc(p.topic) + ' · ' + esc(p.date) + '</span><strong>' + esc(p.title) + '</strong><small>' + esc(p.quote) + '</small></div><span class="mono">' + p.min + ' min</span></a></li>';
+    }).join('');
+    $('#home-total').textContent = P.length + (P.length === 1 ? ' blog' : ' blogs');
+    $('#n-blogs').textContent = P.length;
+  } else {
+    $('#home-feature').hidden = true; $('#home-total').textContent = 'Blogs coming soon';
+  }
+
+  /* ---------- honours: seals ---------- */
+  var SEAL = {
+    award: '<svg viewBox="0 0 44 44"><defs><linearGradient id="sg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff1d4"/><stop offset=".45" stop-color="#e9b467"/><stop offset="1" stop-color="#b77a33"/></linearGradient></defs><circle cx="22" cy="22" r="20.5" fill="rgba(243,198,140,.1)" stroke="url(#sg)"/><path d="M22 11.5l3 6.3 6.9.8-5.1 4.7 1.4 6.8L22 26.7l-6.2 3.4 1.4-6.8-5.1-4.7 6.9-.8z" fill="url(#sg)"/><path d="M10 27c1.5 4.5 6 8 12 8s10.5-3.5 12-8" fill="none" stroke="rgba(243,198,140,.55)" stroke-dasharray="1.5 2.5"/></svg>',
+    cert: '<svg viewBox="0 0 44 44"><circle cx="22" cy="22" r="20.5" fill="rgba(255,255,255,.03)" stroke="rgba(243,198,140,.55)"/><circle cx="22" cy="19" r="7" fill="none" stroke="#f3c68c" stroke-width="1.3"/><path d="M18 25l-2.5 8.5 6.5-3 6.5 3L26 25" fill="none" stroke="#f3c68c" stroke-width="1.3" stroke-linejoin="round"/><path d="M19 19l2 2 4-4" fill="none" stroke="#fff1d4" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>'
+  };
+  var rows = $$('#honours li');
+  rows.forEach(function (li) { li.querySelector('.seal').innerHTML = SEAL[li.dataset.kind]; });
+
+  /* ---------- gold-foil burst: flakes that flash as they turn, a few glints, one thin ring ---------- */
+  var bc = $('#burst'), bx = bc.getContext('2d'), BW, BH, BD, parts = [], rings = [], running = false, last = 0;
+  function bsize() { BD = Math.min(devicePixelRatio || 1, 2); BW = innerWidth; BH = innerHeight; bc.width = BW * BD; bc.height = BH * BD; }
+  bsize(); addEventListener('resize', bsize);
+  var FOIL = [[183, 122, 51], [233, 180, 103], [247, 212, 156], [255, 241, 212], [201, 141, 66]];
+  function burst(x, y, power) {
+    rings.push({ x: x, y: y, t: 0, life: .9, r: 40 + 70 * power });
+    for (var i = 0, n = Math.round(14 + 52 * power); i < n; i++) {
+      var ang = -Math.PI / 2 + (Math.random() - .5) * Math.PI * (power > .7 ? 1.9 : 1.3);
+      var sp = (140 + Math.random() * 380) * (.55 + power * .6), glint = Math.random() < .12;
+      parts.push({ x: x, y: y, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, t: 0, life: (glint ? .55 : 1.3) + Math.random() * .9, glint: glint,
+        w: 3.5 + Math.random() * 6, h: 1.6 + Math.random() * 2.2, rot: Math.random() * 6.28, vr: (Math.random() - .5) * 14,
+        fp: Math.random() * 6.28, vf: 6 + Math.random() * 10, col: FOIL[(Math.random() * FOIL.length) | 0], s: 1.4 + Math.random() * 2.4 });
+    }
+    if (!running) { running = true; last = performance.now(); requestAnimationFrame(loop); }
+  }
+  function loop(now) {
+    var dt = Math.max(0, Math.min(.05, (now - last) / 1000)); last = now;
+    bx.setTransform(BD, 0, 0, BD, 0, 0); bx.clearRect(0, 0, BW, BH);
+    bx.setTransform(BD, 0, 0, BD, 0, -scrollY * BD); // particles live in page space, so they scroll with the row
+    rings = rings.filter(function (r) {
+      r.t += dt; var k = r.t / r.life; if (k >= 1) return false;
+      bx.strokeStyle = 'rgba(243,198,140,' + (.38 * (1 - k)) + ')'; bx.lineWidth = 1;
+      bx.beginPath(); bx.arc(r.x, r.y, r.r * (1 - Math.pow(1 - k, 3)), 0, 6.283); bx.stroke();
+      return true;
+    });
+    parts = parts.filter(function (p) {
+      p.t += dt; var k = p.t / p.life; if (k >= 1) return false;
+      var drag = Math.pow(p.glint ? .12 : .2, dt);
+      p.vx *= drag; p.vy = p.vy * drag + 190 * dt * (p.glint ? .2 : 1);
+      p.x += (p.vx + Math.sin(p.t * 5 + p.fp) * 28) * dt; p.y += p.vy * dt; p.rot += p.vr * dt; p.fp += p.vf * dt;
+      var alpha = k < .1 ? k / .1 : 1 - Math.pow((k - .1) / .9, 2);
+      if (p.glint) {
+        var g = p.s * Math.sin(k * Math.PI);
+        bx.globalCompositeOperation = 'lighter'; bx.fillStyle = 'rgba(255,241,212,' + (.9 * alpha) + ')';
+        bx.beginPath(); bx.moveTo(p.x, p.y - g * 2); bx.quadraticCurveTo(p.x, p.y, p.x + g * 2, p.y); bx.quadraticCurveTo(p.x, p.y, p.x, p.y + g * 2); bx.quadraticCurveTo(p.x, p.y, p.x - g * 2, p.y); bx.quadraticCurveTo(p.x, p.y, p.x, p.y - g * 2); bx.fill();
+        bx.globalCompositeOperation = 'source-over';
+      } else {
+        var lit = Math.abs(Math.cos(p.fp)), m = Math.pow(lit, 6), c = p.col;
+        bx.fillStyle = 'rgba(' + Math.round(c[0] + (255 - c[0]) * m) + ',' + Math.round(c[1] + (246 - c[1]) * m) + ',' + Math.round(c[2] + (226 - c[2]) * m) + ',' + alpha + ')';
+        bx.save(); bx.translate(p.x, p.y); bx.rotate(p.rot); bx.scale(1, Math.max(.08, lit)); bx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h); bx.restore();
+      }
+      return true;
+    });
+    if (parts.length || rings.length) requestAnimationFrame(loop);
+    else { running = false; bx.setTransform(BD, 0, 0, BD, 0, 0); bx.clearRect(0, 0, BW, BH); }
+  }
+  function celebrate(li, power) {
+    li.classList.remove('lit'); void li.offsetWidth; li.classList.add('lit');
+    var seal = li.querySelector('.seal'); seal.classList.remove('spin'); void seal.offsetWidth; seal.classList.add('spin');
+    if (reduce) return;
+    var r = seal.getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top + r.height / 2 + scrollY, power);
+  }
+  var lastHover = new WeakMap();
+  rows.forEach(function (li) {
+    var big = li.dataset.kind === 'award';
+    li.addEventListener('pointerenter', function (e) {
+      if (e.pointerType !== 'mouse') return;
+      var t = performance.now(); if (t - (lastHover.get(li) || 0) > 1600) { lastHover.set(li, t); celebrate(li, big ? .45 : .28); }
+    });
+    li.addEventListener('click', function () { celebrate(li, big ? 1 : .7); });
+    li.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); celebrate(li, big ? 1 : .7); } });
+  });
+  // once per visit, when the panel is mostly on screen, each honour catches the light in turn
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function (es) {
+      if (!es[0].isIntersecting) return;
+      io.disconnect();
+      rows.forEach(function (li, i) { setTimeout(function () { celebrate(li, li.dataset.kind === 'award' ? .85 : .5); }, 350 + i * 230); });
+    }, { threshold: .55 });
+    io.observe($('.certs'));
+  }
+})();
+</script>
 </body>
 </html>
