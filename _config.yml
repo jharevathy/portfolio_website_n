@@ -4,3 +4,4 @@ exclude:
   - README.md
   - design-system
   - .gitignore
+  - "SAP Joule enablement"
