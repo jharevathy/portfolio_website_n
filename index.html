@@ -406,7 +406,7 @@ html.no-gl .milestone { position: static; opacity: 1; visibility: visible; trans
 /* 06 proof + writing */
 .proof { padding-block: 18vh 18vh; display: grid; gap: 18px; }
 .split { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); gap: 18px; align-items: start; }
-.certs, .posts { padding: 10px 24px 24px; }
+.certs { padding: 10px 24px 24px; }
 .tally { display: grid; justify-items: end; gap: 6px; }
 .tally .count { color: transparent; }
 .honours li { position: relative; display: grid; grid-template-columns: 44px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 16px 10px 16px 0; cursor: pointer; border-radius: 12px; }
@@ -424,21 +424,18 @@ html.no-gl .milestone { position: static; opacity: 1; visibility: visible; trans
 .kindtag { font-family: var(--f-mono); font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--paper-3); margin-left: 8px; }
 .kindtag.award { color: var(--accent); }
 #burst { position: fixed; inset: 0; z-index: 25; width: 100%; height: 100%; pointer-events: none; }
-.topic { font-family: var(--f-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
-.feature { display: grid; gap: 12px; padding: 22px; margin: 10px 0 6px; border-radius: 16px; background: linear-gradient(160deg, rgba(243,198,140,.1), rgba(243,198,140,.02) 60%); box-shadow: inset 0 0 0 1px rgba(243,198,140,.22); transition: box-shadow .4s, transform .5s var(--ease-out); }
-.feature:hover { box-shadow: inset 0 0 0 1px rgba(243,198,140,.5); transform: translateY(-2px); }
-.feature__row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.new { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; padding: 4px 9px; border-radius: var(--r-pill); background: var(--accent); color: var(--ink); }
-.feature h3 { font-family: var(--f-display); font-weight: 400; text-transform: uppercase; font-size: clamp(28px, 2.6vw, 38px); line-height: .98; text-wrap: balance; }
-.feature p { color: var(--paper-2); font-size: 15.5px; max-width: 58ch; }
-.feature .meta { display: flex; gap: 14px; flex-wrap: wrap; font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .08em; color: var(--paper-3); text-transform: uppercase; }
-.rows li a { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 16px 0; transition: transform .5s var(--ease-out); }
-.rows li + li a { border-top: 1px solid var(--hair); }
-.rows li a:hover { transform: translateX(8px); }
-.rows li a:hover strong { color: var(--accent); }
-.rows strong { font-weight: 600; font-size: 16.5px; letter-spacing: -.01em; transition: color .3s; display: block; margin-top: 4px; }
-.rows small { display: block; color: var(--paper-2); font-size: 14px; margin-top: 3px; }
-.panel-foot { display: flex; justify-content: space-between; align-items: center; gap: 16px; padding-top: 18px; border-top: 1px solid var(--hair); flex-wrap: wrap; }
+.certs { margin-bottom: 72px; }
+@media (min-width: 900px) {
+  .honours { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); column-gap: 48px; }
+  .honours li:nth-child(2) { border-top: 0; }
+}
+.subhead { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px 32px; flex-wrap: wrap; margin-bottom: 22px; }
+.subhead__title { font-size: calc(clamp(40px, 4.6vw, 72px) * var(--d-scale)); }
+.blog-cards .card { color: inherit; text-decoration: none; }
+.blog-cards .card h3 { transition: color .3s; }
+.blog-cards .card:hover h3 { color: var(--accent); }
+.blog-cards .new { font-family: var(--f-mono); font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; padding: 4px 9px; border-radius: var(--r-pill); background: var(--accent); color: var(--ink); margin-left: auto; margin-right: 12px; }
+.blog-cards .card__top { gap: 0; }
 .panel-title { padding: 18px 0 8px; }
 
 /* 07 contact */
@@ -675,26 +672,25 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
       <h2 class="display h2" data-reveal>Proof &amp;<br>writing<span class="rule" aria-hidden="true"><i></i></span></h2>
       <div class="tally"><p class="count foil">5 · <span id="n-blogs">6</span></p><span class="mono">Honours · Blogs</span></div>
     </div>
-    <div class="split">
-      <div class="certs glass">
-        <p class="mono panel-title">Certifications &amp; recognition</p>
-        <ul class="honours" id="honours">
-          <li data-kind="cert" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>OCI Generative AI Certified Professional</strong><small>Oracle<span class="kindtag">Certification</span></small></div><span class="mono">2024</span></li>
-          <li data-kind="award" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>Dream Team</strong><small>Vodafone Idea Ltd<span class="kindtag award">Award</span></small></div><span class="mono">2026</span></li>
-          <li data-kind="award" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>Rockstar Performer</strong><small>Vodafone Idea Ltd<span class="kindtag award">Award</span></small></div><span class="mono">2025</span></li>
-          <li data-kind="cert" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>AWS Academy Graduate</strong><small>AWS<span class="kindtag">Certification</span></small></div><span class="mono">2022</span></li>
-          <li data-kind="cert" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>Product Management</strong><small>TurnIP Innovations<span class="kindtag">Certification</span></small></div><span class="mono">2022</span></li>
-        </ul>
-      </div>
-      <div class="posts glass">
-        <p class="mono panel-title">Latest blogs</p>
-        <a class="feature" id="home-feature" href="blog/"></a>
-        <ul class="rows" id="home-rows"></ul>
-        <div class="panel-foot">
-          <span class="mono" id="home-total"></span>
-          <a class="btn btn--solid" href="blog/">Open the library <svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg></a>
-        </div>
-      </div>
+    <div class="certs glass">
+      <p class="mono panel-title">Certifications &amp; recognition</p>
+      <ul class="honours" id="honours">
+        <li data-kind="cert" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>OCI Generative AI Certified Professional</strong><small>Oracle<span class="kindtag">Certification</span></small></div><span class="mono">2024</span></li>
+        <li data-kind="award" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>Dream Team</strong><small>Vodafone Idea Ltd<span class="kindtag award">Award</span></small></div><span class="mono">2026</span></li>
+        <li data-kind="award" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>Rockstar Performer</strong><small>Vodafone Idea Ltd<span class="kindtag award">Award</span></small></div><span class="mono">2025</span></li>
+        <li data-kind="cert" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>AWS Academy Graduate</strong><small>AWS<span class="kindtag">Certification</span></small></div><span class="mono">2022</span></li>
+        <li data-kind="cert" tabindex="0"><span class="seal" aria-hidden="true"></span><div><strong>Product Management</strong><small>TurnIP Innovations<span class="kindtag">Certification</span></small></div><span class="mono">2022</span></li>
+      </ul>
+    </div>
+
+    <div class="subhead">
+      <h3 class="display subhead__title">From the <span class="foil">blog</span></h3>
+      <p class="mono" id="blog-count">Latest writing</p>
+    </div>
+    <div class="cards blog-cards" id="blog-cards"></div>
+    <div class="more glass">
+      <p class="mono" id="blog-more">Every blog lives in the library</p>
+      <a class="btn btn--ghost" href="blog/">All blogs <svg viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4"/></svg></a>
     </div>
   </section>
 
@@ -733,6 +729,29 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
 
 
 <script src="blog/posts.js"></script>
+<script>
+/* Blog tiles for the homepage, built from blog/posts.js (newest three) */
+(function () {
+  var B = window.BLOG, box = document.getElementById('blog-cards');
+  if (!B || !box) return;
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  var P = B.posts, show = P.slice(0, 3), arrow = '<svg viewBox="0 0 16 16"><path d="M4 12 12 4M6 4h6v6"/></svg>';
+  box.innerHTML = show.map(function (p, i) {
+    return '<a class="card glass" data-tilt href="' + B.href(p.slug, 'blog/') + '">' +
+      '<div class="card__top"><span class="card__idx foil">' + String(i + 1).padStart(2, '0') + '</span>' + (i === 0 ? '<span class="new">New</span>' : '') + '<span class="card__arrow">' + arrow + '</span></div>' +
+      '<p class="mono">' + esc(p.topic) + ' · ' + esc(p.date) + ' · <span style="white-space:nowrap">' + p.min + ' min read</span></p>' +
+      '<h3 class="h3">' + esc(p.title) + '</h3>' +
+      '<p>' + esc(p.dek) + '</p>' +
+      '<ul class="chips">' + p.tags.map(function (t) { return '<li class="chip">' + esc(t) + '</li>'; }).join('') + '</ul></a>';
+  }).join('');
+  var rest = P.slice(3);
+  document.getElementById('blog-count').textContent = P.length + (P.length === 1 ? ' blog' : ' blogs');
+  document.getElementById('blog-more').textContent = rest.length
+    ? '+ ' + rest.length + ' more in the library — ' + rest.slice(0, 2).map(function (p) { return p.title; }).join(', ') + (rest.length > 2 ? ' …' : '')
+    : 'Every blog lives in the library';
+  var n = document.getElementById('n-blogs'); if (n) n.textContent = P.length;
+})();
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js"></script>
 <script>
@@ -1256,7 +1275,7 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   }
 
   /* ---------- project bodies on the orbit ---------- */
-  var workEl = $('#s-work'), projCards = $$('.cards .card'), hoverProj = 0, focusProj = 0, lastFocus = 1, focusAmt = 0, bodyV = new THREE.Vector3();
+  var workEl = $('#s-work'), projCards = $$('#s-work .cards .card'), hoverProj = 0, focusProj = 0, lastFocus = 1, focusAmt = 0, bodyV = new THREE.Vector3();
   function setFocus(j) {
     focusProj = j; if (j) lastFocus = j;
     projCards.forEach(function (c, q) { c.classList.toggle('is-focus', focusProj === q + 1); c.setAttribute('aria-pressed', String(focusProj === q + 1)); });
@@ -1519,21 +1538,6 @@ footer.wrap { padding-block: 0 140px; display: flex; justify-content: space-betw
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-
-  /* ---------- latest blogs ---------- */
-  var B = window.BLOG;
-  if (B && B.posts.length) {
-    var P = B.posts, top = P[0], f = $('#home-feature');
-    f.href = B.href(top.slug, 'blog/');
-    f.innerHTML = '<div class="feature__row"><span class="new">New</span><span class="topic">' + esc(top.topic) + '</span></div><h3>' + esc(top.title) + '</h3><p>' + esc(top.dek) + '</p><div class="meta"><span>' + esc(top.date) + '</span><span>' + top.min + ' min read</span></div>';
-    $('#home-rows').innerHTML = P.slice(1, 4).map(function (p) {
-      return '<li><a href="' + B.href(p.slug, 'blog/') + '"><div><span class="topic">' + esc(p.topic) + ' · ' + esc(p.date) + '</span><strong>' + esc(p.title) + '</strong><small>' + esc(p.quote) + '</small></div><span class="mono">' + p.min + ' min</span></a></li>';
-    }).join('');
-    $('#home-total').textContent = P.length + (P.length === 1 ? ' blog' : ' blogs');
-    $('#n-blogs').textContent = P.length;
-  } else {
-    $('#home-feature').hidden = true; $('#home-total').textContent = 'Blogs coming soon';
-  }
 
   /* ---------- honours: seals ---------- */
   var SEAL = {
