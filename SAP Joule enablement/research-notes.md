@@ -178,3 +178,39 @@ Microsoft
 SAP Knowledge Base / Notes referenced (open in SAP for Me): 2791410, 3523238, 3558794, 3632703, 3639572, 3641945, 3675105, 3685621, 3721340, 3721491, 3729978.
 
 News and partner sources (context only): theregister.com (May 2026 on-prem AI), siliconangle.com (Oct 2026 Joule agentic work layer), savictech.com, clarity.cx, redresscompliance.com, saplicensingexperts.com.
+
+---
+
+## 9. Version 1.1: peer review of an "enhanced" edition (5 Nov 2026)
+
+A peer-enhanced edition (Antigravity, v1.1 "Enhanced Master Edition") added about
+6,900 words to v1.0 and marked all open items "CLOSED / VERIFIED" without citing
+sources. Each addition was checked against the research above.
+
+**Adopted** (folded into the runbook; tagged Verify where SAP docs were not seen):
+request chain and diagnostic order (1.3); IAS must send groups in the token;
+disable SAP ID Service for business-user logon; IPS keyed on Global User ID;
+discovered vs registered systems; one formation per system; System Landscape
+Administrator; booster retry and generated destinations; Launchpad_User /
+Launchpad_Admin in role collections; IAS group mapping over direct assignment;
+Joule plugin catalog SAP_CORE_BC_UI_JOU_PC for S/4HANA Cloud; Private Edition
+principal propagation (Cloud Connector resources, STRUST, CERTRULE, SU53);
+multi-system via central Work Zone; ECC scope caution; SuccessFactors company ID
+spelling and third-party cookies; Ariba developer-portal app; SAC data access
+control; grounding data hygiene; one Entra app registration per tier; Joule Studio
+destination property sap.processautomation.enabled; certificate lifecycle;
+12 extra troubleshooting rows; testing diagnostics (decode tokens locally).
+
+**Parked as field notes to confirm** (runbook Appendix E): SKU 8019544 as Joule
+Base; J4C 35 AI Units per user per month; grounding 0.005 AI Units per record;
+plan `preview`; productive region list and region-dependent grounding; booster
+screens, durations, error codes and destination names; CSP domains; Private
+Edition plugin component and launchpad parameter; mobile redirect URI; Joule
+Studio CLI; Joule for Developers ADT version, S_AIQADTLO values, proxy host and
+release floor; SuccessFactors name-dependent bindings.
+
+**Not adopted** (runbook Appendix F, with reasons): 18 GB Cloud Foundry memory
+requirement; SAP_COM_0882 "EMPTY vs ROLE mode"; mapping personIdExternal to
+userUuid; on-premise 2021+ fully eligible with CPEA; guaranteed EU residency and
+"never logged"; always customer-managed from day 1; DNS-record quarantine of
+users; pasting tokens into public JWT websites.
